@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Salário CLT</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter (para o corpo) e Fira Code (para o resultado) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* Aplicando as fontes importadas */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilo para a área de resultado, usando uma fonte monoespaçada para alinhamento perfeito */
+        #resultado {
+            font-family: 'Fira Code', monospace;
+            white-space: pre; /* Garante que os espaços sejam preservados */
+            overflow-x: auto; /* Adiciona scroll horizontal se necessário */
+        }
+        /* Remove as setas dos inputs de número */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="container mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">Calculadora de Salário CLT</h1>
+            <p class="text-slate-600 mt-2">Preencha os campos abaixo para simular um contrato de trabalho.</p>
+        </header>
+
+        <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-6" role="alert">
+            <strong class="font-bold">Erro:</strong>
+            <span class="block sm:inline" id="error-text"></span>
+        </div>
+
+        <main class="space-y-6">
+            <!-- Seção de Informações do Empregado -->
+            <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-semibold mb-4 text-slate-800">1. Informações do Empregado</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="nome" class="block text-sm font-medium text-slate-700">Nome do Empregado</label>
+                        <input type="text" id="nome" placeholder="Ex: João da Silva" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="dataAdm" class="block text-sm font-medium text-slate-700">Data de Admissão (Opcional)</label>
+                        <input type="date" id="dataAdm" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção de Horário de Trabalho -->
+            <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-semibold mb-4 text-slate-800">2. Horário de Trabalho Semanal</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-slate-500">
+                        <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                            <tr>
+                                <th scope="col" class="px-4 py-3">Dia</th>
+                                <th scope="col" class="px-4 py-3 text-center">Folga</th>
+                                <th scope="col" class="px-4 py-3">Entrada 1</th>
+                                <th scope="col" class="px-4 py-3">Saída Intervalo</th>
+                                <th scope="col" class="px-4 py-3">Entrada 2</th>
+                                <th scope="col" class="px-4 py-3">Saída Final</th>
+                            </tr>
+                        </thead>
+                        <tbody id="horarios-body">
+                            <!-- Linhas da tabela serão geradas pelo JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                 <p class="text-xs text-slate-500 mt-3"><em>Nota: Se apenas Entrada 1 e Saída Final forem preenchidos, será considerado um único período sem intervalo.</em></p>
+            </section>
+
+            <!-- Seção de Informações Salariais -->
+            <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-semibold mb-4 text-slate-800">3. Informações Salariais</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="salarioBruto" class="block text-sm font-medium text-slate-700">Salário Bruto de Referência (44h/semana)</label>
+                        <input type="number" id="salarioBruto" placeholder="3000.00" step="0.01" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="flex items-end space-x-6">
+                        <div class="flex items-center">
+                            <input id="insalubridade" type="checkbox" class="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
+                            <label for="insalubridade" class="ml-2 block text-sm text-slate-900">Insalubridade (10%)</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input id="periculosidade" type="checkbox" class="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
+                            <label for="periculosidade" class="ml-2 block text-sm text-slate-900">Periculosidade (30%)</label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <button onclick="calcular()" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300">
+                Calcular Resumo
+            </button>
+
+            <!-- Seção de Resultados -->
+            <section class="bg-slate-900 p-6 rounded-xl shadow-sm">
+                 <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-white">4. Resultado da Simulação</h3>
+                    <button id="copyButton" class="bg-slate-700 text-slate-300 text-xs font-semibold py-1 px-3 rounded-md hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-indigo-500 transition-colors">
+                        Copiar
+                    </button>
+                </div>
+                <textarea id="resultado" readonly class="w-full h-96 bg-slate-800 text-slate-300 text-sm p-4 border border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y"></textarea>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const diasDaSemana = [
+            { id: 'segunda', nome: 'Segunda-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
+            { id: 'terca', nome: 'Terça-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
+            { id: 'quarta', nome: 'Quarta-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
+            { id: 'quinta', nome: 'Quinta-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
+            { id: 'sexta', nome: 'Sexta-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
+            { id: 'sabado', nome: 'Sábado', e1: '08:40', sI: '12:00', e2: '', sF: '', folga: false },
+            { id: 'domingo', nome: 'Domingo', e1: '', sI: '', e2: '', sF: '', folga: true },
+        ];
+
+        // Função para exibir erros
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            errorText.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        // Função para limpar erros
+        function clearError() {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.classList.add('hidden');
+        }
+
+        // Função para manipular a mudança no checkbox de folga
+        function handleFolgaChange(checkbox) {
+            const row = checkbox.closest('tr');
+            const inputs = row.querySelectorAll('input[type="time"]');
+            const diaId = row.dataset.diaId;
+            const diaInfo = diasDaSemana.find(d => d.id === diaId);
+
+            inputs.forEach(input => {
+                input.disabled = checkbox.checked;
+                if (checkbox.checked) {
+                    input.value = '';
+                } else {
+                    // Preenche com os horários padrão ao desmarcar a folga
+                    const inputType = input.dataset.type;
+                    input.value = diaInfo[inputType] || '';
+                }
+            });
+        }
+
+        // Função para gerar a tabela de horários dinamicamente
+        function popularTabelaHorarios() {
+            const tbody = document.getElementById('horarios-body');
+            tbody.innerHTML = ''; // Limpa a tabela antes de popular
+
+            diasDaSemana.forEach(dia => {
+                const tr = document.createElement('tr');
+                tr.className = 'bg-white border-b';
+                tr.dataset.diaId = dia.id;
+
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-medium text-slate-900">${dia.nome}</td>
+                    <td class="px-4 py-3 text-center">
+                        <input type="checkbox" class="folga h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500" id="folga${dia.id}" ${dia.folga ? 'checked' : ''}>
+                    </td>
+                    <td class="px-4 py-3"><input type="time" data-type="e1" id="${dia.id}Entrada1" value="${dia.e1}" ${dia.folga ? 'disabled' : ''} class="w-full bg-slate-50 border-slate-200 rounded-md text-sm p-1 disabled:bg-slate-200 disabled:cursor-not-allowed"></td>
+                    <td class="px-4 py-3"><input type="time" data-type="sI" id="${dia.id}SaidaIntervalo" value="${dia.sI}" ${dia.folga ? 'disabled' : ''} class="w-full bg-slate-50 border-slate-200 rounded-md text-sm p-1 disabled:bg-slate-200 disabled:cursor-not-allowed"></td>
+                    <td class="px-4 py-3"><input type="time" data-type="e2" id="${dia.id}Entrada2" value="${dia.e2}" ${dia.folga ? 'disabled' : ''} class="w-full bg-slate-50 border-slate-200 rounded-md text-sm p-1 disabled:bg-slate-200 disabled:cursor-not-allowed"></td>
+                    <td class="px-4 py-3"><input type="time" data-type="sF" id="${dia.id}SaidaFinal" value="${dia.sF}" ${dia.folga ? 'disabled' : ''} class="w-full bg-slate-50 border-slate-200 rounded-md text-sm p-1 disabled:bg-slate-200 disabled:cursor-not-allowed"></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Adiciona os event listeners para os checkboxes
+            document.querySelectorAll('.folga').forEach(checkbox => {
+                checkbox.addEventListener('change', () => handleFolgaChange(checkbox));
+            });
+        }
+        
+        // Função para capitalizar a primeira letra
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Função para preencher com espaços e garantir alinhamento
+        function pad(text, length) {
+            return String(text).padEnd(length, ' ');
+        }
+
+        function calcular() {
+            clearError(); // Limpa erros anteriores
+            
+            // --- Coleta de Dados ---
+            const nome = document.getElementById('nome').value.trim();
+            const dataAdm = document.getElementById('dataAdm').value;
+            const salarioBrutoReferencia = parseFloat(document.getElementById('salarioBruto').value);
+            const insalubridade = document.getElementById('insalubridade').checked;
+            const periculosidade = document.getElementById('periculosidade').checked;
+
+            // --- Validação ---
+            if (!salarioBrutoReferencia || salarioBrutoReferencia <= 0) {
+                showError('Por favor, insira um salário bruto de referência válido.');
+                return;
+            }
+
+            // --- Cálculos de Horas ---
+            let totalHorasSemanais = 0;
+            const detalhesHorarios = {};
+
+            function timeToMinutes(time) {
+                if (!time) return 0;
+                const [h, m] = time.split(':').map(Number);
+                return h * 60 + m;
+            }
+
+            try {
+                diasDaSemana.forEach(dia => {
+                    const folga = document.getElementById(`folga${dia.id}`).checked;
+                    if (folga) {
+                        detalhesHorarios[dia.id] = { folga: true, nome: dia.nome };
+                        return;
+                    }
+
+                    const e1 = document.getElementById(`${dia.id}Entrada1`).value;
+                    const sI = document.getElementById(`${dia.id}SaidaIntervalo`).value;
+                    const e2 = document.getElementById(`${dia.id}Entrada2`).value;
+                    const sF = document.getElementById(`${dia.id}SaidaFinal`).value;
+
+                    if (!e1 || !sF) {
+                        detalhesHorarios[dia.id] = { folga: true, nome: dia.nome };
+                        return;
+                    }
+
+                    const e1m = timeToMinutes(e1);
+                    const sIm = timeToMinutes(sI);
+                    const e2m = timeToMinutes(e2);
+                    const sFm = timeToMinutes(sF);
+
+                    let horasDia = 0;
+                    if (sIm > e1m && sFm > e2m && e2m > sIm) { // Dois períodos
+                        horasDia = ((sIm - e1m) + (sFm - e2m)) / 60;
+                    } else { // Um período
+                        horasDia = (sFm - e1m) / 60;
+                    }
+
+                    if (horasDia < 0) throw new Error(`Horários inválidos para ${dia.nome}.`);
+                    
+                    totalHorasSemanais += horasDia;
+                    
+                    detalhesHorarios[dia.id] = {
+                        folga: false,
+                        nome: dia.nome,
+                        horarioStr: (sI && e2) ? `${e1} - ${sI}, ${e2} - ${sF}` : `${e1} - ${sF}`,
+                        total: horasDia.toFixed(2)
+                    };
+                });
+            } catch (error) {
+                showError(error.message);
+                return;
+            }
+
+            // --- Cálculos Salariais Proporcionais ---
+            const horasSemanaisPadrao = 44.0;
+            // O salário proporcional é calculado com base na carga horária semanal.
+            const salarioProporcional = (totalHorasSemanais / horasSemanaisPadrao) * salarioBrutoReferencia;
+
+            // Adicionais são calculados sobre o salário de referência (não proporcional).
+            const adicionalInsalubridade = insalubridade ? salarioBrutoReferencia * 0.10 : 0;
+            const adicionalPericulosidade = periculosidade ? salarioBrutoReferencia * 0.30 : 0;
+
+            // A base de cálculo para descontos é o salário proporcional mais os adicionais.
+            const salarioBaseCalculo = salarioProporcional + adicionalInsalubridade + adicionalPericulosidade;
+
+            // Cálculo INSS (Tabela 2024 - exemplo)
+            let inss = 0;
+            if (salarioBaseCalculo <= 1412.00) {
+                inss = salarioBaseCalculo * 0.075;
+            } else if (salarioBaseCalculo <= 2666.68) {
+                inss = (1412.00 * 0.075) + ((salarioBaseCalculo - 1412.00) * 0.09);
+            } else if (salarioBaseCalculo <= 4000.03) {
+                inss = (1412.00 * 0.075) + ((2666.68 - 1412.00) * 0.09) + ((salarioBaseCalculo - 4000.03) * 0.12);
+            } else if (salarioBaseCalculo <= 7786.02) {
+                inss = (1412.00 * 0.075) + ((2666.68 - 1412.00) * 0.09) + ((4000.03 - 2666.68) * 0.12) + ((salarioBaseCalculo - 4000.03) * 0.14);
+            } else {
+                inss = 908.85; // Teto do INSS
+            }
+
+            // Cálculo IRRF (Tabela 2024 - exemplo)
+            const baseIRRF = salarioBaseCalculo - inss;
+            let irrf = 0;
+            if (baseIRRF > 2259.20 && baseIRRF <= 2826.65) {
+                irrf = (baseIRRF * 0.075) - 169.44;
+            } else if (baseIRRF > 2826.65 && baseIRRF <= 3751.05) {
+                irrf = (baseIRRF * 0.15) - 381.44;
+            } else if (baseIRRF > 3751.05 && baseIRRF <= 4664.68) {
+                irrf = (baseIRRF * 0.225) - 662.77;
+            } else if (baseIRRF > 4664.68) {
+                irrf = (baseIRRF * 0.275) - 896.00;
+            }
+            irrf = Math.max(0, irrf);
+
+            // FGTS é calculado sobre a remuneração total (salário proporcional + adicionais).
+            const fgts = salarioBaseCalculo * 0.08;
+            const salarioLiquido = salarioBaseCalculo - inss - irrf;
+
+            // --- Formatação do Resultado ---
+            const maiorDia = Math.max(...diasDaSemana.map(d => d.nome.length));
+            const colDia = maiorDia + 4;
+            const colHorario = 38;
+            
+            let horariosResumo = `${pad('Dia', colDia)}${pad('Horários', colHorario)}Total\n`;
+            horariosResumo += `${'-'.repeat(colDia-1)} ${'-'.repeat(colHorario-1)} ${'-'.repeat(5)}\n`;
+            
+            Object.values(detalhesHorarios).forEach(detalhe => {
+                const dia = pad(detalhe.nome, colDia);
+                const horario = pad(detalhe.folga ? 'Folga' : detalhe.horarioStr, colHorario);
+                const total = detalhe.folga ? '0.00h' : `${detalhe.total}h`;
+                horariosResumo += `${dia}${horario}${total}\n`;
+            });
+
+            const resultado = `
+* Resumo de Contrato *
+
+**Informações do Empregado:**
+- Nome:             ${nome || 'Não informado'}
+- Data de Admissão: ${dataAdm || 'Não informada'}
+
+**Carga Horária:**
+- Total Semanal:    ${totalHorasSemanais.toFixed(2)} horas
+- Proporção:        ${((totalHorasSemanais / horasSemanaisPadrao) * 100).toFixed(0)}% de uma jornada de 44h
+
+**Remuneração:**
+- Salário (Ref. 44h): R$ ${salarioBrutoReferencia.toFixed(2)}
+- Salário Proporcional: R$ ${salarioProporcional.toFixed(2)}
+- Adicionais:         R$ ${(adicionalInsalubridade + adicionalPericulosidade).toFixed(2)}
+- Salário de Cálculo: R$ ${salarioBaseCalculo.toFixed(2)}
+
+**Descontos:**
+- INSS:               R$ ${inss.toFixed(2)}
+- IRRF:               R$ ${irrf.toFixed(2)}
+- Total Descontos:    R$ ${(inss + irrf).toFixed(2)}
+
+**Salário Líquido:**
+- Valor a Receber:    R$ ${salarioLiquido.toFixed(2)}
+
+**Encargos da Empresa:**
+- FGTS (8%):          R$ ${fgts.toFixed(2)}
+`.trim();
+
+            document.getElementById('resultado').value = resultado;
+        }
+        
+        // --- Inicialização ---
+        window.onload = () => {
+            popularTabelaHorarios();
+            
+            // Event listener para o botão de copiar
+            document.getElementById('copyButton').addEventListener('click', () => {
+                const resultadoText = document.getElementById('resultado');
+                resultadoText.select();
+                document.execCommand('copy');
+                // Feedback visual para o usuário
+                const copyButton = document.getElementById('copyButton');
+                const originalText = copyButton.textContent;
+                copyButton.textContent = 'Copiado!';
+                setTimeout(() => {
+                    copyButton.textContent = originalText;
+                }, 1500);
+            });
+        };
+    </script>
+</body>
+</html>
