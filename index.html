@@ -3,28 +3,271 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Salário CLT</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Inter (para o corpo) e Fira Code (para o resultado) -->
+    <title>Calculadora de Rescisão CLT</title>
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Aplicando as fontes importadas */
+        /* ============================================
+           CSS RESET E VARIÁVEIS
+        ============================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            /* Cores principais */
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #e0e7ff;
+
+            /* Cores de fundo */
+            --bg-body: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-input: #f8fafc;
+            --bg-result: #1e293b;
+            --bg-result-item: #334155;
+
+            /* Cores de texto */
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --text-light: #f1f5f9;
+
+            /* Cores de borda */
+            --border-color: #e2e8f0;
+            --border-focus: #4f46e5;
+
+            /* Cores de status */
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --warning: #f59e0b;
+            --warning-bg: #fef3c7;
+            --danger: #ef4444;
+            --danger-bg: #fee2e2;
+            --info: #3b82f6;
+            --info-bg: #dbeafe;
+
+            /* Sombras */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+            /* Espaçamentos */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+
+            /* Border radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+        }
+
+        /* ============================================
+           BASE STYLES
+        ============================================ */
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
         }
-        /* Estilo para a área de resultado, usando uma fonte monoespaçada para alinhamento perfeito */
-        #resultado {
-            font-family: 'Fira Code', monospace;
-            white-space: pre; /* Garante que os espaços sejam preservados */
-            overflow-x: auto; /* Adiciona scroll horizontal se necessário */
+
+        /* ============================================
+           LAYOUT - CONTAINER
+        ============================================ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
         }
-        /* Remove as setas dos inputs de número */
+
+        /* ============================================
+           HEADER
+        ============================================ */
+        .header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-xl) 0;
+        }
+
+        .header__title {
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .header__subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           MAIN GRID LAYOUT
+        ============================================ */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-xl);
+        }
+
+        @media (min-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr 1fr;
+                align-items: start;
+            }
+        }
+
+        /* ============================================
+           CARD COMPONENT
+        ============================================ */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .card__header {
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card__title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .card__icon {
+            width: 24px;
+            height: 24px;
+            color: var(--primary);
+        }
+
+        /* ============================================
+           FORM COMPONENTS
+        ============================================ */
+        .form-grid {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-md);
+        }
+
+        @media (min-width: 640px) {
+            .form-row--2cols {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-label--required::after {
+            content: ' *';
+            color: var(--danger);
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-family: inherit;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25rem;
+            padding-right: 2.5rem;
+        }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: var(--spacing-xs);
+        }
+
+        /* Checkbox/Radio customizado */
+        .form-checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            cursor: pointer;
+        }
+
+        .form-checkbox input[type="radio"],
+        .form-checkbox input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .form-checkbox span {
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+        }
+
+        /* Remove setas do input number */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
@@ -33,362 +276,1285 @@
         input[type="number"] {
             -moz-appearance: textfield;
         }
+
+        /* ============================================
+           BUTTON COMPONENT
+        ============================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn--primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn--primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn--primary:active {
+            transform: translateY(0);
+        }
+
+        .btn--block {
+            width: 100%;
+        }
+
+        .btn--lg {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+        }
+
+        .btn__icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* ============================================
+           RESULTS CARD
+        ============================================ */
+        .results-card {
+            background: var(--bg-result);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            position: sticky;
+            top: var(--spacing-lg);
+        }
+
+        .results-card__header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .results-card__title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .results-card__body {
+            padding: var(--spacing-lg);
+        }
+
+        .results-card__empty {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--text-muted);
+        }
+
+        .results-card__empty-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto var(--spacing-md);
+            opacity: 0.5;
+        }
+
+        /* ============================================
+           RESULT ITEMS
+        ============================================ */
+        .result-section {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .result-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-section__title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-sm);
+            padding-bottom: var(--spacing-xs);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-sm) 0;
+            font-size: 0.9375rem;
+        }
+
+        .result-item__label {
+            color: var(--text-muted);
+        }
+
+        .result-item__value {
+            font-weight: 500;
+            color: var(--text-light);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .result-item--positive .result-item__value {
+            color: var(--success);
+        }
+
+        .result-item--negative .result-item__value {
+            color: var(--danger);
+        }
+
+        .result-item--highlight {
+            background: var(--bg-result-item);
+            margin: var(--spacing-sm) calc(var(--spacing-lg) * -1);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: 0;
+        }
+
+        .result-item--total {
+            border-top: 2px solid rgba(255, 255, 255, 0.2);
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
+        }
+
+        .result-item--total .result-item__label,
+        .result-item--total .result-item__value {
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+
+        .result-item--total .result-item__value {
+            color: var(--success);
+        }
+
+        /* ============================================
+           BADGE COMPONENT
+        ============================================ */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .badge--success {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .badge--warning {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .badge--danger {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .badge--info {
+            background: var(--info-bg);
+            color: var(--info);
+        }
+
+        /* ============================================
+           SUMMARY INFO
+        ============================================ */
+        .summary-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            padding: var(--spacing-md);
+            background: var(--bg-result-item);
+            border-radius: var(--radius-md);
+        }
+
+        .summary-info__item {
+            text-align: center;
+        }
+
+        .summary-info__label {
+            font-size: 0.6875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.125rem;
+        }
+
+        .summary-info__value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        /* ============================================
+           ALERT COMPONENT
+        ============================================ */
+        .alert {
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+        }
+
+        .alert--info {
+            background: var(--info-bg);
+            color: var(--info);
+            border: 1px solid var(--info);
+        }
+
+        .alert--warning {
+            background: var(--warning-bg);
+            color: #92400e;
+            border: 1px solid var(--warning);
+        }
+
+        .alert__icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        .alert__content {
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* ============================================
+           DIVIDER
+        ============================================ */
+        .divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: var(--spacing-lg) 0;
+        }
+
+        /* ============================================
+           FOOTER
+        ============================================ */
+        .footer {
+            text-align: center;
+            padding: var(--spacing-xl) 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ============================================
+           ANIMATIONS
+        ============================================ */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* ============================================
+           UTILITIES
+        ============================================ */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-md {
+            margin-top: var(--spacing-md);
+        }
+
+        .mb-md {
+            margin-bottom: var(--spacing-md);
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
-
-    <div class="container mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">Calculadora de Salário CLT</h1>
-            <p class="text-slate-600 mt-2">Preencha os campos abaixo para simular um contrato de trabalho.</p>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="header__title">Calculadora de Rescisao CLT</h1>
+            <p class="header__subtitle">
+                Calcule todos os valores da rescisao trabalhista de forma precisa,
+                considerando a Lei 12.506/2011 e as regras do Art. 484-A.
+            </p>
         </header>
 
-        <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-6" role="alert">
-            <strong class="font-bold">Erro:</strong>
-            <span class="block sm:inline" id="error-text"></span>
-        </div>
-
-        <main class="space-y-6">
-            <!-- Seção de Informações do Empregado -->
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h3 class="text-xl font-semibold mb-4 text-slate-800">1. Informações do Empregado</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="nome" class="block text-sm font-medium text-slate-700">Nome do Empregado</label>
-                        <input type="text" id="nome" placeholder="Ex: João da Silva" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <div>
-                        <label for="dataAdm" class="block text-sm font-medium text-slate-700">Data de Admissão (Opcional)</label>
-                        <input type="date" id="dataAdm" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
+        <!-- Main Content -->
+        <main class="main-grid">
+            <!-- Formulário -->
+            <div class="card">
+                <div class="card__header">
+                    <h2 class="card__title">
+                        <svg class="card__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Dados do Contrato
+                    </h2>
                 </div>
-            </section>
 
-            <!-- Seção de Horário de Trabalho -->
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h3 class="text-xl font-semibold mb-4 text-slate-800">2. Horário de Trabalho Semanal</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-slate-500">
-                        <thead class="text-xs text-slate-700 uppercase bg-slate-100">
-                            <tr>
-                                <th scope="col" class="px-4 py-3">Dia</th>
-                                <th scope="col" class="px-4 py-3 text-center">Folga</th>
-                                <th scope="col" class="px-4 py-3">Entrada 1</th>
-                                <th scope="col" class="px-4 py-3">Saída Intervalo</th>
-                                <th scope="col" class="px-4 py-3">Entrada 2</th>
-                                <th scope="col" class="px-4 py-3">Saída Final</th>
-                            </tr>
-                        </thead>
-                        <tbody id="horarios-body">
-                            <!-- Linhas da tabela serão geradas pelo JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-                 <p class="text-xs text-slate-500 mt-3"><em>Nota: Se apenas Entrada 1 e Saída Final forem preenchidos, será considerado um único período sem intervalo.</em></p>
-            </section>
-
-            <!-- Seção de Informações Salariais -->
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h3 class="text-xl font-semibold mb-4 text-slate-800">3. Informações Salariais</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="salarioBruto" class="block text-sm font-medium text-slate-700">Salário Bruto de Referência (44h/semana)</label>
-                        <input type="number" id="salarioBruto" placeholder="3000.00" step="0.01" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <div class="flex items-end space-x-6">
-                        <div class="flex items-center">
-                            <input id="insalubridade" type="checkbox" class="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
-                            <label for="insalubridade" class="ml-2 block text-sm text-slate-900">Insalubridade (10%)</label>
+                <form id="formRescisao" class="form-grid">
+                    <!-- Salário e Datas -->
+                    <div class="form-row form-row--2cols">
+                        <div class="form-group">
+                            <label for="salarioBase" class="form-label form-label--required">Salario Base (Bruto)</label>
+                            <input
+                                type="number"
+                                id="salarioBase"
+                                class="form-input"
+                                placeholder="Ex: 3500.00"
+                                step="0.01"
+                                min="0"
+                                required
+                            >
                         </div>
-                        <div class="flex items-center">
-                            <input id="periculosidade" type="checkbox" class="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
-                            <label for="periculosidade" class="ml-2 block text-sm text-slate-900">Periculosidade (30%)</label>
+                        <div class="form-group">
+                            <label for="saldoFGTS" class="form-label form-label--required">Saldo do FGTS</label>
+                            <input
+                                type="number"
+                                id="saldoFGTS"
+                                class="form-input"
+                                placeholder="Ex: 15000.00"
+                                step="0.01"
+                                min="0"
+                                required
+                            >
+                            <span class="form-hint">Consulte o extrato do FGTS</span>
                         </div>
                     </div>
-                </div>
-            </section>
-            
-            <button onclick="calcular()" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300">
-                Calcular Resumo
-            </button>
 
-            <!-- Seção de Resultados -->
-            <section class="bg-slate-900 p-6 rounded-xl shadow-sm">
-                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-semibold text-white">4. Resultado da Simulação</h3>
-                    <button id="copyButton" class="bg-slate-700 text-slate-300 text-xs font-semibold py-1 px-3 rounded-md hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-indigo-500 transition-colors">
-                        Copiar
+                    <div class="form-row form-row--2cols">
+                        <div class="form-group">
+                            <label for="dataAdmissao" class="form-label form-label--required">Data de Admissao</label>
+                            <input
+                                type="date"
+                                id="dataAdmissao"
+                                class="form-input"
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="dataDemissao" class="form-label form-label--required">Data de Demissao</label>
+                            <input
+                                type="date"
+                                id="dataDemissao"
+                                class="form-input"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Motivo do Desligamento -->
+                    <div class="form-group">
+                        <label for="motivoDesligamento" class="form-label form-label--required">Motivo do Desligamento</label>
+                        <select id="motivoDesligamento" class="form-select" required>
+                            <option value="">Selecione o motivo...</option>
+                            <option value="sem_justa_causa">Demissao sem Justa Causa (pelo empregador)</option>
+                            <option value="pedido_demissao">Pedido de Demissao (pelo empregado)</option>
+                            <option value="justa_causa">Demissao por Justa Causa (Art. 482)</option>
+                            <option value="acordo">Rescisao por Acordo (Art. 484-A)</option>
+                            <option value="fim_contrato">Termino de Contrato a Prazo/Experiencia</option>
+                        </select>
+                    </div>
+
+                    <!-- Tipo de Aviso Prévio (condicional) -->
+                    <div class="form-group" id="tipoAvisoGroup">
+                        <label class="form-label">Tipo de Aviso Previo</label>
+                        <div class="form-checkbox-group">
+                            <label class="form-checkbox">
+                                <input type="radio" name="tipoAviso" value="indenizado" checked>
+                                <span>Indenizado</span>
+                            </label>
+                            <label class="form-checkbox">
+                                <input type="radio" name="tipoAviso" value="trabalhado">
+                                <span>Trabalhado</span>
+                            </label>
+                            <label class="form-checkbox" id="avisoDispensadoOption">
+                                <input type="radio" name="tipoAviso" value="dispensado">
+                                <span>Dispensado/Nao Cumprido</span>
+                            </label>
+                        </div>
+                        <span class="form-hint" id="avisoHint">O aviso indenizado projeta o tempo de servico para calculo de ferias e 13o.</span>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Férias -->
+                    <div class="form-group">
+                        <label class="form-label">Possui Ferias Vencidas?</label>
+                        <div class="form-checkbox-group">
+                            <label class="form-checkbox">
+                                <input type="radio" name="feriasVencidas" value="nao" checked>
+                                <span>Nao</span>
+                            </label>
+                            <label class="form-checkbox">
+                                <input type="radio" name="feriasVencidas" value="sim">
+                                <span>Sim (1 periodo)</span>
+                            </label>
+                            <label class="form-checkbox">
+                                <input type="radio" name="feriasVencidas" value="sim2">
+                                <span>Sim (2 periodos)</span>
+                            </label>
+                        </div>
+                        <span class="form-hint">Ferias vencidas sao aquelas cujo periodo aquisitivo ja foi completado.</span>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Botão Calcular -->
+                    <button type="submit" class="btn btn--primary btn--block btn--lg">
+                        <svg class="btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        Calcular Rescisao
                     </button>
+                </form>
+            </div>
+
+            <!-- Resultados -->
+            <div class="results-card" id="resultsCard">
+                <div class="results-card__header">
+                    <h2 class="results-card__title">Resultado da Rescisao</h2>
                 </div>
-                <textarea id="resultado" readonly class="w-full h-96 bg-slate-800 text-slate-300 text-sm p-4 border border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y"></textarea>
-            </section>
+                <div class="results-card__body" id="resultsBody">
+                    <div class="results-card__empty">
+                        <svg class="results-card__empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p>Preencha os dados e clique em<br><strong>"Calcular Rescisao"</strong></p>
+                    </div>
+                </div>
+            </div>
         </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Calculadora desenvolvida com base na legislacao trabalhista brasileira (CLT).</p>
+            <p class="mt-md">Lei 12.506/2011 (Aviso Previo Proporcional) | Art. 484-A (Acordo)</p>
+        </footer>
     </div>
 
     <script>
-        const diasDaSemana = [
-            { id: 'segunda', nome: 'Segunda-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
-            { id: 'terca', nome: 'Terça-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
-            { id: 'quarta', nome: 'Quarta-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
-            { id: 'quinta', nome: 'Quinta-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
-            { id: 'sexta', nome: 'Sexta-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
-            { id: 'sabado', nome: 'Sábado', e1: '08:40', sI: '12:00', e2: '', sF: '', folga: false },
-            { id: 'domingo', nome: 'Domingo', e1: '', sI: '', e2: '', sF: '', folga: true },
-        ];
+        /**
+         * ============================================
+         * CALCULADORA DE RESCISÃO CLT
+         * ============================================
+         *
+         * Implementa os cálculos de rescisão trabalhista conforme:
+         * - CLT (Consolidação das Leis do Trabalho)
+         * - Lei 12.506/2011 (Aviso Prévio Proporcional)
+         * - Art. 484-A (Rescisão por Acordo)
+         *
+         * Autor: Desenvolvido como ferramenta educacional
+         * Versão: 1.0
+         */
 
-        // Função para exibir erros
-        function showError(message) {
-            const errorDiv = document.getElementById('error-message');
-            const errorText = document.getElementById('error-text');
-            errorText.textContent = message;
-            errorDiv.classList.remove('hidden');
+        // ============================================
+        // CONFIGURAÇÕES E CONSTANTES
+        // ============================================
+
+        /**
+         * Formatador de moeda brasileira (BRL)
+         */
+        const formatadorMoeda = new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        /**
+         * Formatador de datas
+         */
+        const formatadorData = new Intl.DateTimeFormat('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+
+        // ============================================
+        // FUNÇÕES AUXILIARES DE CÁLCULO
+        // ============================================
+
+        /**
+         * Calcula a diferença em dias entre duas datas
+         * @param {Date} dataInicio - Data inicial
+         * @param {Date} dataFim - Data final
+         * @returns {number} - Número de dias
+         */
+        function calcularDiasEntreDatas(dataInicio, dataFim) {
+            const umDia = 24 * 60 * 60 * 1000; // milissegundos em um dia
+            return Math.round((dataFim - dataInicio) / umDia);
         }
 
-        // Função para limpar erros
-        function clearError() {
-            const errorDiv = document.getElementById('error-message');
-            errorDiv.classList.add('hidden');
+        /**
+         * Calcula anos completos de trabalho
+         * @param {Date} dataAdmissao - Data de admissão
+         * @param {Date} dataDemissao - Data de demissão
+         * @returns {number} - Anos completos trabalhados
+         */
+        function calcularAnosCompletos(dataAdmissao, dataDemissao) {
+            let anos = dataDemissao.getFullYear() - dataAdmissao.getFullYear();
+            const mesAdm = dataAdmissao.getMonth();
+            const mesDem = dataDemissao.getMonth();
+            const diaAdm = dataAdmissao.getDate();
+            const diaDem = dataDemissao.getDate();
+
+            // Ajusta se ainda não completou o ano
+            if (mesDem < mesAdm || (mesDem === mesAdm && diaDem < diaAdm)) {
+                anos--;
+            }
+
+            return Math.max(0, anos);
         }
 
-        // Função para manipular a mudança no checkbox de folga
-        function handleFolgaChange(checkbox) {
-            const row = checkbox.closest('tr');
-            const inputs = row.querySelectorAll('input[type="time"]');
-            const diaId = row.dataset.diaId;
-            const diaInfo = diasDaSemana.find(d => d.id === diaId);
+        /**
+         * Calcula o aviso prévio proporcional conforme Lei 12.506/2011
+         * Base: 30 dias + 3 dias por ano completo, limitado a 90 dias
+         * @param {number} anosCompletos - Anos completos de trabalho
+         * @returns {number} - Dias de aviso prévio
+         */
+        function calcularDiasAvisoPrevio(anosCompletos) {
+            const diasBase = 30;
+            const diasPorAno = 3;
+            const diasAdicionais = Math.min(anosCompletos * diasPorAno, 60); // Máx 60 dias adicionais
+            return diasBase + diasAdicionais; // Máximo 90 dias
+        }
 
-            inputs.forEach(input => {
-                input.disabled = checkbox.checked;
-                if (checkbox.checked) {
-                    input.value = '';
-                } else {
-                    // Preenche com os horários padrão ao desmarcar a folga
-                    const inputType = input.dataset.type;
-                    input.value = diaInfo[inputType] || '';
+        /**
+         * Calcula os avos de 13º e férias considerando a regra dos 15 dias
+         * Se trabalhou >= 15 dias no mês, conta como 1/12 avo
+         * @param {Date} dataInicio - Data inicial do período
+         * @param {Date} dataFim - Data final do período
+         * @returns {number} - Número de avos (1/12)
+         */
+        function calcularAvos(dataInicio, dataFim) {
+            let avos = 0;
+            const dataAtual = new Date(dataInicio);
+
+            while (dataAtual <= dataFim) {
+                const ano = dataAtual.getFullYear();
+                const mes = dataAtual.getMonth();
+
+                // Primeiro dia do mês
+                const primeiroDiaMes = new Date(ano, mes, 1);
+                // Último dia do mês
+                const ultimoDiaMes = new Date(ano, mes + 1, 0);
+
+                // Data efetiva de início no mês
+                const inicioEfetivo = dataInicio > primeiroDiaMes ? dataInicio : primeiroDiaMes;
+                // Data efetiva de fim no mês
+                const fimEfetivo = dataFim < ultimoDiaMes ? dataFim : ultimoDiaMes;
+
+                // Dias trabalhados no mês (incluindo o dia inicial e final)
+                const diasNoMes = calcularDiasEntreDatas(inicioEfetivo, fimEfetivo) + 1;
+
+                // Regra dos 15 dias: >= 15 dias conta como 1 avo
+                if (diasNoMes >= 15) {
+                    avos++;
                 }
-            });
+
+                // Avança para o próximo mês
+                dataAtual.setMonth(dataAtual.getMonth() + 1);
+                dataAtual.setDate(1);
+            }
+
+            return avos;
         }
 
-        // Função para gerar a tabela de horários dinamicamente
-        function popularTabelaHorarios() {
-            const tbody = document.getElementById('horarios-body');
-            tbody.innerHTML = ''; // Limpa a tabela antes de popular
+        /**
+         * Calcula os avos de 13º proporcional considerando o ano
+         * @param {Date} dataInicio - Data de admissão ou início do ano
+         * @param {Date} dataFim - Data de demissão ou projetada
+         * @returns {number} - Número de avos no ano (máx 12)
+         */
+        function calcularAvosDeTrezimo(dataAdmissao, dataFim) {
+            const anoFim = dataFim.getFullYear();
 
-            diasDaSemana.forEach(dia => {
-                const tr = document.createElement('tr');
-                tr.className = 'bg-white border-b';
-                tr.dataset.diaId = dia.id;
+            // Início do período para cálculo (1º de janeiro do ano ou data de admissão)
+            const inicioAno = new Date(anoFim, 0, 1);
+            const dataInicio = dataAdmissao > inicioAno ? dataAdmissao : inicioAno;
 
-                tr.innerHTML = `
-                    <td class="px-4 py-3 font-medium text-slate-900">${dia.nome}</td>
-                    <td class="px-4 py-3 text-center">
-                        <input type="checkbox" class="folga h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500" id="folga${dia.id}" ${dia.folga ? 'checked' : ''}>
-                    </td>
-                    <td class="px-4 py-3"><input type="time" data-type="e1" id="${dia.id}Entrada1" value="${dia.e1}" ${dia.folga ? 'disabled' : ''} class="w-full bg-slate-50 border-slate-200 rounded-md text-sm p-1 disabled:bg-slate-200 disabled:cursor-not-allowed"></td>
-                    <td class="px-4 py-3"><input type="time" data-type="sI" id="${dia.id}SaidaIntervalo" value="${dia.sI}" ${dia.folga ? 'disabled' : ''} class="w-full bg-slate-50 border-slate-200 rounded-md text-sm p-1 disabled:bg-slate-200 disabled:cursor-not-allowed"></td>
-                    <td class="px-4 py-3"><input type="time" data-type="e2" id="${dia.id}Entrada2" value="${dia.e2}" ${dia.folga ? 'disabled' : ''} class="w-full bg-slate-50 border-slate-200 rounded-md text-sm p-1 disabled:bg-slate-200 disabled:cursor-not-allowed"></td>
-                    <td class="px-4 py-3"><input type="time" data-type="sF" id="${dia.id}SaidaFinal" value="${dia.sF}" ${dia.folga ? 'disabled' : ''} class="w-full bg-slate-50 border-slate-200 rounded-md text-sm p-1 disabled:bg-slate-200 disabled:cursor-not-allowed"></td>
+            const avos = calcularAvos(dataInicio, dataFim);
+            return Math.min(avos, 12); // Máximo 12 avos
+        }
+
+        /**
+         * Calcula avos de férias proporcionais
+         * @param {Date} dataAdmissao - Data de admissão
+         * @param {Date} dataFim - Data de demissão ou projetada
+         * @param {number} periodosVencidos - Quantos períodos de férias vencidas existem
+         * @returns {number} - Número de avos de férias proporcionais
+         */
+        function calcularAvosFerias(dataAdmissao, dataFim, periodosVencidos) {
+            // Data base para férias proporcionais (considera períodos vencidos)
+            const anosPeriodosVencidos = periodosVencidos;
+            const dataBaseFerias = new Date(dataAdmissao);
+            dataBaseFerias.setFullYear(dataBaseFerias.getFullYear() + anosPeriodosVencidos);
+
+            // Se a data base for após a demissão, não há proporcionais
+            if (dataBaseFerias > dataFim) {
+                return 0;
+            }
+
+            const avos = calcularAvos(dataBaseFerias, dataFim);
+            return Math.min(avos, 12);
+        }
+
+        /**
+         * Calcula os dias trabalhados no mês da demissão (saldo de salário)
+         * @param {Date} dataDemissao - Data de demissão
+         * @returns {number} - Dias trabalhados no mês
+         */
+        function calcularDiasTrabalhadosMes(dataDemissao) {
+            return dataDemissao.getDate();
+        }
+
+        /**
+         * Projeta a data considerando o aviso prévio indenizado
+         * @param {Date} dataDemissao - Data de demissão original
+         * @param {number} diasAviso - Dias de aviso prévio
+         * @returns {Date} - Data projetada
+         */
+        function projetarDataComAviso(dataDemissao, diasAviso) {
+            const dataProjetada = new Date(dataDemissao);
+            dataProjetada.setDate(dataProjetada.getDate() + diasAviso);
+            return dataProjetada;
+        }
+
+        // ============================================
+        // FUNÇÃO PRINCIPAL DE CÁLCULO
+        // ============================================
+
+        /**
+         * Calcula todos os valores da rescisão com base no motivo do desligamento
+         * Implementa switch/case para cada cenário conforme CLT
+         *
+         * @param {Object} dados - Dados do formulário
+         * @returns {Object} - Objeto com todos os valores calculados
+         */
+        function calculateTermination(dados) {
+            const {
+                salarioBase,
+                saldoFGTS,
+                dataAdmissao,
+                dataDemissao,
+                motivoDesligamento,
+                tipoAviso,
+                feriasVencidas
+            } = dados;
+
+            // Cálculos base
+            const salarioDia = salarioBase / 30; // Base comercial (30 dias)
+            const anosCompletos = calcularAnosCompletos(dataAdmissao, dataDemissao);
+            const diasAvisoPrevio = calcularDiasAvisoPrevio(anosCompletos);
+            const diasTrabalhadosMes = calcularDiasTrabalhadosMes(dataDemissao);
+
+            // Converte férias vencidas para número de períodos
+            const periodosVencidos = feriasVencidas === 'sim' ? 1 : (feriasVencidas === 'sim2' ? 2 : 0);
+
+            // Resultado inicial
+            const resultado = {
+                // Informações gerais
+                anosCompletos,
+                diasAvisoPrevio,
+                diasTrabalhadosMes,
+                dataProjetada: dataDemissao,
+                motivoDescricao: '',
+
+                // Verbas
+                saldoSalario: 0,
+                avisoPrevio: 0,
+                decimoTerceiro: 0,
+                feriasVencidas: 0,
+                tercoFeriasVencidas: 0,
+                feriasProporcionais: 0,
+                tercoFeriasProporcionais: 0,
+                multaFGTS: 0,
+
+                // Descontos (para pedido de demissão sem cumprir aviso)
+                descontoAviso: 0,
+
+                // Informações adicionais
+                sacaFGTS: false,
+                percentualMultaFGTS: 0,
+                avosTrezimo: 0,
+                avosFerias: 0,
+
+                // Totais
+                totalBruto: 0,
+                totalDescontos: 0,
+                totalLiquido: 0
+            };
+
+            // Data para cálculo (pode ser projetada com aviso prévio)
+            let dataCalculo = new Date(dataDemissao);
+
+            // ============================================
+            // SWITCH/CASE POR MOTIVO DE DESLIGAMENTO
+            // ============================================
+            switch (motivoDesligamento) {
+
+                // ----------------------------------------
+                // A. DEMISSÃO SEM JUSTA CAUSA
+                // ----------------------------------------
+                case 'sem_justa_causa':
+                    resultado.motivoDescricao = 'Demissao sem Justa Causa';
+
+                    // Aviso prévio
+                    if (tipoAviso === 'indenizado') {
+                        resultado.avisoPrevio = diasAvisoPrevio * salarioDia;
+                        // Projeta a data para cálculo de férias e 13º
+                        dataCalculo = projetarDataComAviso(dataDemissao, diasAvisoPrevio);
+                        resultado.dataProjetada = dataCalculo;
+                    } else if (tipoAviso === 'trabalhado') {
+                        // Aviso trabalhado: já está incluído no saldo de salário
+                        resultado.avisoPrevio = 0;
+                    }
+
+                    // Saldo de salário
+                    resultado.saldoSalario = diasTrabalhadosMes * salarioDia;
+
+                    // 13º proporcional (considera projeção do aviso)
+                    resultado.avosTrezimo = calcularAvosDeTrezimo(dataAdmissao, dataCalculo);
+                    resultado.decimoTerceiro = (salarioBase / 12) * resultado.avosTrezimo;
+
+                    // Férias vencidas
+                    if (periodosVencidos > 0) {
+                        resultado.feriasVencidas = salarioBase * periodosVencidos;
+                        resultado.tercoFeriasVencidas = resultado.feriasVencidas / 3;
+                    }
+
+                    // Férias proporcionais (considera projeção do aviso)
+                    resultado.avosFerias = calcularAvosFerias(dataAdmissao, dataCalculo, periodosVencidos);
+                    resultado.feriasProporcionais = (salarioBase / 12) * resultado.avosFerias;
+                    resultado.tercoFeriasProporcionais = resultado.feriasProporcionais / 3;
+
+                    // Multa FGTS 40%
+                    resultado.percentualMultaFGTS = 40;
+                    resultado.multaFGTS = saldoFGTS * 0.40;
+                    resultado.sacaFGTS = true;
+                    break;
+
+                // ----------------------------------------
+                // B. PEDIDO DE DEMISSÃO
+                // ----------------------------------------
+                case 'pedido_demissao':
+                    resultado.motivoDescricao = 'Pedido de Demissao';
+
+                    // Saldo de salário
+                    resultado.saldoSalario = diasTrabalhadosMes * salarioDia;
+
+                    // Aviso prévio
+                    if (tipoAviso === 'trabalhado') {
+                        // Trabalhado: já incluso no período
+                        resultado.avisoPrevio = 0;
+                    } else if (tipoAviso === 'dispensado') {
+                        // Dispensado pela empresa: não desconta
+                        resultado.avisoPrevio = 0;
+                    } else {
+                        // Não cumprido: empresa pode descontar 30 dias
+                        resultado.descontoAviso = salarioBase;
+                    }
+
+                    // 13º proporcional
+                    resultado.avosTrezimo = calcularAvosDeTrezimo(dataAdmissao, dataDemissao);
+                    resultado.decimoTerceiro = (salarioBase / 12) * resultado.avosTrezimo;
+
+                    // Férias vencidas
+                    if (periodosVencidos > 0) {
+                        resultado.feriasVencidas = salarioBase * periodosVencidos;
+                        resultado.tercoFeriasVencidas = resultado.feriasVencidas / 3;
+                    }
+
+                    // Férias proporcionais
+                    resultado.avosFerias = calcularAvosFerias(dataAdmissao, dataDemissao, periodosVencidos);
+                    resultado.feriasProporcionais = (salarioBase / 12) * resultado.avosFerias;
+                    resultado.tercoFeriasProporcionais = resultado.feriasProporcionais / 3;
+
+                    // Sem multa FGTS, sem saque
+                    resultado.percentualMultaFGTS = 0;
+                    resultado.multaFGTS = 0;
+                    resultado.sacaFGTS = false;
+                    break;
+
+                // ----------------------------------------
+                // C. DEMISSÃO POR JUSTA CAUSA
+                // ----------------------------------------
+                case 'justa_causa':
+                    resultado.motivoDescricao = 'Demissao por Justa Causa (Art. 482)';
+
+                    // Saldo de salário
+                    resultado.saldoSalario = diasTrabalhadosMes * salarioDia;
+
+                    // Férias vencidas (direito adquirido - Súmula 171 TST)
+                    if (periodosVencidos > 0) {
+                        resultado.feriasVencidas = salarioBase * periodosVencidos;
+                        resultado.tercoFeriasVencidas = resultado.feriasVencidas / 3;
+                    }
+
+                    // NÃO TEM: aviso, 13º proporcional, férias proporcionais, multa FGTS
+                    resultado.avisoPrevio = 0;
+                    resultado.decimoTerceiro = 0;
+                    resultado.feriasProporcionais = 0;
+                    resultado.tercoFeriasProporcionais = 0;
+                    resultado.percentualMultaFGTS = 0;
+                    resultado.multaFGTS = 0;
+                    resultado.sacaFGTS = false;
+                    resultado.avosTrezimo = 0;
+                    resultado.avosFerias = 0;
+                    break;
+
+                // ----------------------------------------
+                // D. RESCISÃO POR ACORDO (Art. 484-A)
+                // ----------------------------------------
+                case 'acordo':
+                    resultado.motivoDescricao = 'Rescisao por Acordo (Art. 484-A)';
+
+                    // Aviso prévio (50% se indenizado, integral se trabalhado)
+                    if (tipoAviso === 'indenizado') {
+                        resultado.avisoPrevio = (diasAvisoPrevio * salarioDia) * 0.5; // 50%
+                        // Projeta a data para cálculo (usa metade dos dias para projeção)
+                        dataCalculo = projetarDataComAviso(dataDemissao, Math.floor(diasAvisoPrevio / 2));
+                        resultado.dataProjetada = dataCalculo;
+                    } else if (tipoAviso === 'trabalhado') {
+                        resultado.avisoPrevio = 0; // Já incluso no período
+                        dataCalculo = dataDemissao;
+                    }
+
+                    // Saldo de salário
+                    resultado.saldoSalario = diasTrabalhadosMes * salarioDia;
+
+                    // 13º proporcional (integral)
+                    resultado.avosTrezimo = calcularAvosDeTrezimo(dataAdmissao, dataCalculo);
+                    resultado.decimoTerceiro = (salarioBase / 12) * resultado.avosTrezimo;
+
+                    // Férias vencidas (integral)
+                    if (periodosVencidos > 0) {
+                        resultado.feriasVencidas = salarioBase * periodosVencidos;
+                        resultado.tercoFeriasVencidas = resultado.feriasVencidas / 3;
+                    }
+
+                    // Férias proporcionais (integral)
+                    resultado.avosFerias = calcularAvosFerias(dataAdmissao, dataCalculo, periodosVencidos);
+                    resultado.feriasProporcionais = (salarioBase / 12) * resultado.avosFerias;
+                    resultado.tercoFeriasProporcionais = resultado.feriasProporcionais / 3;
+
+                    // Multa FGTS 20% (metade)
+                    resultado.percentualMultaFGTS = 20;
+                    resultado.multaFGTS = saldoFGTS * 0.20;
+                    resultado.sacaFGTS = true; // Limitado a 80% do saldo
+                    break;
+
+                // ----------------------------------------
+                // E. TÉRMINO DE CONTRATO A PRAZO
+                // ----------------------------------------
+                case 'fim_contrato':
+                    resultado.motivoDescricao = 'Termino de Contrato a Prazo/Experiencia';
+
+                    // Saldo de salário
+                    resultado.saldoSalario = diasTrabalhadosMes * salarioDia;
+
+                    // 13º proporcional
+                    resultado.avosTrezimo = calcularAvosDeTrezimo(dataAdmissao, dataDemissao);
+                    resultado.decimoTerceiro = (salarioBase / 12) * resultado.avosTrezimo;
+
+                    // Férias vencidas
+                    if (periodosVencidos > 0) {
+                        resultado.feriasVencidas = salarioBase * periodosVencidos;
+                        resultado.tercoFeriasVencidas = resultado.feriasVencidas / 3;
+                    }
+
+                    // Férias proporcionais
+                    resultado.avosFerias = calcularAvosFerias(dataAdmissao, dataDemissao, periodosVencidos);
+                    resultado.feriasProporcionais = (salarioBase / 12) * resultado.avosFerias;
+                    resultado.tercoFeriasProporcionais = resultado.feriasProporcionais / 3;
+
+                    // Sem aviso prévio (termo já conhecido)
+                    resultado.avisoPrevio = 0;
+
+                    // Sem multa FGTS, mas pode sacar
+                    resultado.percentualMultaFGTS = 0;
+                    resultado.multaFGTS = 0;
+                    resultado.sacaFGTS = true;
+                    break;
+
+                default:
+                    throw new Error('Motivo de desligamento invalido.');
+            }
+
+            // ============================================
+            // CÁLCULO DOS TOTAIS
+            // ============================================
+
+            // Total bruto (soma de todas as verbas)
+            resultado.totalBruto =
+                resultado.saldoSalario +
+                resultado.avisoPrevio +
+                resultado.decimoTerceiro +
+                resultado.feriasVencidas +
+                resultado.tercoFeriasVencidas +
+                resultado.feriasProporcionais +
+                resultado.tercoFeriasProporcionais +
+                resultado.multaFGTS;
+
+            // Total de descontos
+            resultado.totalDescontos = resultado.descontoAviso;
+
+            // Total líquido
+            resultado.totalLiquido = resultado.totalBruto - resultado.totalDescontos;
+
+            return resultado;
+        }
+
+        // ============================================
+        // FUNÇÕES DE INTERFACE (UI)
+        // ============================================
+
+        /**
+         * Atualiza a visibilidade dos campos condicionais
+         */
+        function atualizarCamposCondicionais() {
+            const motivo = document.getElementById('motivoDesligamento').value;
+            const tipoAvisoGroup = document.getElementById('tipoAvisoGroup');
+            const avisoDispensadoOption = document.getElementById('avisoDispensadoOption');
+            const avisoHint = document.getElementById('avisoHint');
+
+            // Mostra/oculta opções de aviso prévio baseado no motivo
+            switch (motivo) {
+                case 'sem_justa_causa':
+                    tipoAvisoGroup.classList.remove('hidden');
+                    avisoDispensadoOption.classList.add('hidden');
+                    avisoHint.textContent = 'O aviso indenizado projeta o tempo de servico para calculo de ferias e 13o.';
+                    break;
+
+                case 'pedido_demissao':
+                    tipoAvisoGroup.classList.remove('hidden');
+                    avisoDispensadoOption.classList.remove('hidden');
+                    avisoHint.textContent = 'Se nao cumprir o aviso, a empresa pode descontar 30 dias de salario.';
+                    break;
+
+                case 'acordo':
+                    tipoAvisoGroup.classList.remove('hidden');
+                    avisoDispensadoOption.classList.add('hidden');
+                    avisoHint.textContent = 'No acordo, o aviso indenizado e pago pela metade (50%).';
+                    break;
+
+                case 'justa_causa':
+                case 'fim_contrato':
+                    tipoAvisoGroup.classList.add('hidden');
+                    break;
+
+                default:
+                    tipoAvisoGroup.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Renderiza os resultados na interface
+         * @param {Object} resultado - Objeto com os valores calculados
+         * @param {Object} dados - Dados originais do formulário
+         */
+        function renderizarResultados(resultado, dados) {
+            const resultsBody = document.getElementById('resultsBody');
+
+            // Determina o badge do motivo
+            let badgeClass = 'badge--info';
+            switch (dados.motivoDesligamento) {
+                case 'sem_justa_causa':
+                    badgeClass = 'badge--success';
+                    break;
+                case 'justa_causa':
+                    badgeClass = 'badge--danger';
+                    break;
+                case 'acordo':
+                    badgeClass = 'badge--warning';
+                    break;
+            }
+
+            // Monta o HTML dos resultados
+            let html = `
+                <div class="fade-in">
+                    <!-- Badge do Motivo -->
+                    <div class="text-center mb-md">
+                        <span class="badge ${badgeClass}">${resultado.motivoDescricao}</span>
+                    </div>
+
+                    <!-- Resumo -->
+                    <div class="summary-info">
+                        <div class="summary-info__item">
+                            <div class="summary-info__label">Tempo de Servico</div>
+                            <div class="summary-info__value">${resultado.anosCompletos} ano${resultado.anosCompletos !== 1 ? 's' : ''}</div>
+                        </div>
+                        <div class="summary-info__item">
+                            <div class="summary-info__label">Dias Aviso</div>
+                            <div class="summary-info__value">${resultado.diasAvisoPrevio} dias</div>
+                        </div>
+                        <div class="summary-info__item">
+                            <div class="summary-info__label">Avos 13o</div>
+                            <div class="summary-info__value">${resultado.avosTrezimo}/12</div>
+                        </div>
+                        <div class="summary-info__item">
+                            <div class="summary-info__label">Avos Ferias</div>
+                            <div class="summary-info__value">${resultado.avosFerias}/12</div>
+                        </div>
+                    </div>
+
+                    <!-- Verbas Rescisórias -->
+                    <div class="result-section">
+                        <h3 class="result-section__title">Verbas Rescisorias</h3>
+
+                        <div class="result-item">
+                            <span class="result-item__label">Saldo de Salario (${resultado.diasTrabalhadosMes} dias)</span>
+                            <span class="result-item__value">${formatadorMoeda.format(resultado.saldoSalario)}</span>
+                        </div>
+            `;
+
+            // Aviso prévio (se aplicável)
+            if (resultado.avisoPrevio > 0) {
+                const tipoAvisoTexto = dados.motivoDesligamento === 'acordo' ?
+                    `Aviso Previo Indenizado (50% de ${resultado.diasAvisoPrevio} dias)` :
+                    `Aviso Previo Indenizado (${resultado.diasAvisoPrevio} dias)`;
+                html += `
+                        <div class="result-item">
+                            <span class="result-item__label">${tipoAvisoTexto}</span>
+                            <span class="result-item__value">${formatadorMoeda.format(resultado.avisoPrevio)}</span>
+                        </div>
                 `;
-                tbody.appendChild(tr);
-            });
+            }
 
-            // Adiciona os event listeners para os checkboxes
-            document.querySelectorAll('.folga').forEach(checkbox => {
-                checkbox.addEventListener('change', () => handleFolgaChange(checkbox));
-            });
+            // 13º salário
+            if (resultado.decimoTerceiro > 0) {
+                html += `
+                        <div class="result-item">
+                            <span class="result-item__label">13o Salario Proporcional (${resultado.avosTrezimo}/12)</span>
+                            <span class="result-item__value">${formatadorMoeda.format(resultado.decimoTerceiro)}</span>
+                        </div>
+                `;
+            }
+
+            // Férias vencidas
+            if (resultado.feriasVencidas > 0) {
+                html += `
+                        <div class="result-item">
+                            <span class="result-item__label">Ferias Vencidas</span>
+                            <span class="result-item__value">${formatadorMoeda.format(resultado.feriasVencidas)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-item__label">1/3 Ferias Vencidas</span>
+                            <span class="result-item__value">${formatadorMoeda.format(resultado.tercoFeriasVencidas)}</span>
+                        </div>
+                `;
+            }
+
+            // Férias proporcionais
+            if (resultado.feriasProporcionais > 0) {
+                html += `
+                        <div class="result-item">
+                            <span class="result-item__label">Ferias Proporcionais (${resultado.avosFerias}/12)</span>
+                            <span class="result-item__value">${formatadorMoeda.format(resultado.feriasProporcionais)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-item__label">1/3 Ferias Proporcionais</span>
+                            <span class="result-item__value">${formatadorMoeda.format(resultado.tercoFeriasProporcionais)}</span>
+                        </div>
+                `;
+            }
+
+            // Multa FGTS
+            if (resultado.multaFGTS > 0) {
+                html += `
+                        <div class="result-item result-item--highlight result-item--positive">
+                            <span class="result-item__label">Multa FGTS (${resultado.percentualMultaFGTS}%)</span>
+                            <span class="result-item__value">${formatadorMoeda.format(resultado.multaFGTS)}</span>
+                        </div>
+                `;
+            }
+
+            html += `
+                    </div>
+            `;
+
+            // Descontos (se houver)
+            if (resultado.totalDescontos > 0) {
+                html += `
+                    <div class="result-section">
+                        <h3 class="result-section__title">Descontos</h3>
+                        <div class="result-item result-item--negative">
+                            <span class="result-item__label">Desconto Aviso Nao Cumprido</span>
+                            <span class="result-item__value">- ${formatadorMoeda.format(resultado.descontoAviso)}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Totais
+            html += `
+                    <div class="result-section">
+                        <h3 class="result-section__title">Resumo</h3>
+
+                        <div class="result-item">
+                            <span class="result-item__label">Total Bruto</span>
+                            <span class="result-item__value">${formatadorMoeda.format(resultado.totalBruto)}</span>
+                        </div>
+            `;
+
+            if (resultado.totalDescontos > 0) {
+                html += `
+                        <div class="result-item result-item--negative">
+                            <span class="result-item__label">Total Descontos</span>
+                            <span class="result-item__value">- ${formatadorMoeda.format(resultado.totalDescontos)}</span>
+                        </div>
+                `;
+            }
+
+            html += `
+                        <div class="result-item result-item--total">
+                            <span class="result-item__label">TOTAL LIQUIDO</span>
+                            <span class="result-item__value">${formatadorMoeda.format(resultado.totalLiquido)}</span>
+                        </div>
+                    </div>
+            `;
+
+            // Informações adicionais sobre FGTS
+            html += `
+                    <div class="result-section">
+                        <h3 class="result-section__title">FGTS</h3>
+                        <div class="result-item">
+                            <span class="result-item__label">Saldo Informado</span>
+                            <span class="result-item__value">${formatadorMoeda.format(dados.saldoFGTS)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-item__label">Pode Sacar?</span>
+                            <span class="result-item__value">${resultado.sacaFGTS ? 'Sim' : 'Nao'}</span>
+                        </div>
+            `;
+
+            if (dados.motivoDesligamento === 'acordo') {
+                html += `
+                        <div class="result-item">
+                            <span class="result-item__label">Limite de Saque (80%)</span>
+                            <span class="result-item__value">${formatadorMoeda.format(dados.saldoFGTS * 0.8)}</span>
+                        </div>
+                `;
+            }
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+            resultsBody.innerHTML = html;
         }
-        
-        // Função para capitalizar a primeira letra
-        function capitalize(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
-        }
 
-        // Função para preencher com espaços e garantir alinhamento
-        function pad(text, length) {
-            return String(text).padEnd(length, ' ');
-        }
+        /**
+         * Processa o envio do formulário
+         * @param {Event} event - Evento de submit
+         */
+        function processarFormulario(event) {
+            event.preventDefault();
 
-        function calcular() {
-            clearError(); // Limpa erros anteriores
-            
-            // --- Coleta de Dados ---
-            const nome = document.getElementById('nome').value.trim();
-            const dataAdm = document.getElementById('dataAdm').value;
-            const salarioBrutoReferencia = parseFloat(document.getElementById('salarioBruto').value);
-            const insalubridade = document.getElementById('insalubridade').checked;
-            const periculosidade = document.getElementById('periculosidade').checked;
+            // Coleta os dados do formulário
+            const dados = {
+                salarioBase: parseFloat(document.getElementById('salarioBase').value),
+                saldoFGTS: parseFloat(document.getElementById('saldoFGTS').value),
+                dataAdmissao: new Date(document.getElementById('dataAdmissao').value + 'T00:00:00'),
+                dataDemissao: new Date(document.getElementById('dataDemissao').value + 'T00:00:00'),
+                motivoDesligamento: document.getElementById('motivoDesligamento').value,
+                tipoAviso: document.querySelector('input[name="tipoAviso"]:checked')?.value || 'indenizado',
+                feriasVencidas: document.querySelector('input[name="feriasVencidas"]:checked')?.value || 'nao'
+            };
 
-            // --- Validação ---
-            if (!salarioBrutoReferencia || salarioBrutoReferencia <= 0) {
-                showError('Por favor, insira um salário bruto de referência válido.');
+            // Validações
+            if (isNaN(dados.salarioBase) || dados.salarioBase <= 0) {
+                alert('Por favor, informe um salario base valido.');
                 return;
             }
 
-            // --- Cálculos de Horas ---
-            let totalHorasSemanais = 0;
-            const detalhesHorarios = {};
-
-            function timeToMinutes(time) {
-                if (!time) return 0;
-                const [h, m] = time.split(':').map(Number);
-                return h * 60 + m;
+            if (isNaN(dados.saldoFGTS) || dados.saldoFGTS < 0) {
+                alert('Por favor, informe um saldo de FGTS valido.');
+                return;
             }
 
+            if (dados.dataDemissao <= dados.dataAdmissao) {
+                alert('A data de demissao deve ser posterior a data de admissao.');
+                return;
+            }
+
+            if (!dados.motivoDesligamento) {
+                alert('Por favor, selecione o motivo do desligamento.');
+                return;
+            }
+
+            // Calcula e renderiza
             try {
-                diasDaSemana.forEach(dia => {
-                    const folga = document.getElementById(`folga${dia.id}`).checked;
-                    if (folga) {
-                        detalhesHorarios[dia.id] = { folga: true, nome: dia.nome };
-                        return;
-                    }
-
-                    const e1 = document.getElementById(`${dia.id}Entrada1`).value;
-                    const sI = document.getElementById(`${dia.id}SaidaIntervalo`).value;
-                    const e2 = document.getElementById(`${dia.id}Entrada2`).value;
-                    const sF = document.getElementById(`${dia.id}SaidaFinal`).value;
-
-                    if (!e1 || !sF) {
-                        detalhesHorarios[dia.id] = { folga: true, nome: dia.nome };
-                        return;
-                    }
-
-                    const e1m = timeToMinutes(e1);
-                    const sIm = timeToMinutes(sI);
-                    const e2m = timeToMinutes(e2);
-                    const sFm = timeToMinutes(sF);
-
-                    let horasDia = 0;
-                    if (sIm > e1m && sFm > e2m && e2m > sIm) { // Dois períodos
-                        horasDia = ((sIm - e1m) + (sFm - e2m)) / 60;
-                    } else { // Um período
-                        horasDia = (sFm - e1m) / 60;
-                    }
-
-                    if (horasDia < 0) throw new Error(`Horários inválidos para ${dia.nome}.`);
-                    
-                    totalHorasSemanais += horasDia;
-                    
-                    detalhesHorarios[dia.id] = {
-                        folga: false,
-                        nome: dia.nome,
-                        horarioStr: (sI && e2) ? `${e1} - ${sI}, ${e2} - ${sF}` : `${e1} - ${sF}`,
-                        total: horasDia.toFixed(2)
-                    };
-                });
+                const resultado = calculateTermination(dados);
+                renderizarResultados(resultado, dados);
             } catch (error) {
-                showError(error.message);
-                return;
+                alert('Erro ao calcular: ' + error.message);
+                console.error(error);
             }
-
-            // --- Cálculos Salariais Proporcionais ---
-            const horasSemanaisPadrao = 44.0;
-            // O salário proporcional é calculado com base na carga horária semanal.
-            const salarioProporcional = (totalHorasSemanais / horasSemanaisPadrao) * salarioBrutoReferencia;
-
-            // Adicionais são calculados sobre o salário de referência (não proporcional).
-            const adicionalInsalubridade = insalubridade ? salarioBrutoReferencia * 0.10 : 0;
-            const adicionalPericulosidade = periculosidade ? salarioBrutoReferencia * 0.30 : 0;
-
-            // A base de cálculo para descontos é o salário proporcional mais os adicionais.
-            const salarioBaseCalculo = salarioProporcional + adicionalInsalubridade + adicionalPericulosidade;
-
-            // Cálculo INSS (Tabela 2024 - exemplo)
-            let inss = 0;
-            if (salarioBaseCalculo <= 1412.00) {
-                inss = salarioBaseCalculo * 0.075;
-            } else if (salarioBaseCalculo <= 2666.68) {
-                inss = (1412.00 * 0.075) + ((salarioBaseCalculo - 1412.00) * 0.09);
-            } else if (salarioBaseCalculo <= 4000.03) {
-                inss = (1412.00 * 0.075) + ((2666.68 - 1412.00) * 0.09) + ((salarioBaseCalculo - 4000.03) * 0.12);
-            } else if (salarioBaseCalculo <= 7786.02) {
-                inss = (1412.00 * 0.075) + ((2666.68 - 1412.00) * 0.09) + ((4000.03 - 2666.68) * 0.12) + ((salarioBaseCalculo - 4000.03) * 0.14);
-            } else {
-                inss = 908.85; // Teto do INSS
-            }
-
-            // Cálculo IRRF (Tabela 2024 - exemplo)
-            const baseIRRF = salarioBaseCalculo - inss;
-            let irrf = 0;
-            if (baseIRRF > 2259.20 && baseIRRF <= 2826.65) {
-                irrf = (baseIRRF * 0.075) - 169.44;
-            } else if (baseIRRF > 2826.65 && baseIRRF <= 3751.05) {
-                irrf = (baseIRRF * 0.15) - 381.44;
-            } else if (baseIRRF > 3751.05 && baseIRRF <= 4664.68) {
-                irrf = (baseIRRF * 0.225) - 662.77;
-            } else if (baseIRRF > 4664.68) {
-                irrf = (baseIRRF * 0.275) - 896.00;
-            }
-            irrf = Math.max(0, irrf);
-
-            // FGTS é calculado sobre a remuneração total (salário proporcional + adicionais).
-            const fgts = salarioBaseCalculo * 0.08;
-            const salarioLiquido = salarioBaseCalculo - inss - irrf;
-
-            // --- Formatação do Resultado ---
-            const maiorDia = Math.max(...diasDaSemana.map(d => d.nome.length));
-            const colDia = maiorDia + 4;
-            const colHorario = 38;
-            
-            let horariosResumo = `${pad('Dia', colDia)}${pad('Horários', colHorario)}Total\n`;
-            horariosResumo += `${'-'.repeat(colDia-1)} ${'-'.repeat(colHorario-1)} ${'-'.repeat(5)}\n`;
-            
-            Object.values(detalhesHorarios).forEach(detalhe => {
-                const dia = pad(detalhe.nome, colDia);
-                const horario = pad(detalhe.folga ? 'Folga' : detalhe.horarioStr, colHorario);
-                const total = detalhe.folga ? '0.00h' : `${detalhe.total}h`;
-                horariosResumo += `${dia}${horario}${total}\n`;
-            });
-
-            const resultado = `
-* Resumo de Contrato *
-
-**Informações do Empregado:**
-- Nome:             ${nome || 'Não informado'}
-- Data de Admissão: ${dataAdm || 'Não informada'}
-
-**Carga Horária:**
-- Total Semanal:    ${totalHorasSemanais.toFixed(2)} horas
-- Proporção:        ${((totalHorasSemanais / horasSemanaisPadrao) * 100).toFixed(0)}% de uma jornada de 44h
-
-**Remuneração:**
-- Salário (Ref. 44h): R$ ${salarioBrutoReferencia.toFixed(2)}
-- Salário Proporcional: R$ ${salarioProporcional.toFixed(2)}
-- Adicionais:         R$ ${(adicionalInsalubridade + adicionalPericulosidade).toFixed(2)}
-- Salário de Cálculo: R$ ${salarioBaseCalculo.toFixed(2)}
-
-**Descontos:**
-- INSS:               R$ ${inss.toFixed(2)}
-- IRRF:               R$ ${irrf.toFixed(2)}
-- Total Descontos:    R$ ${(inss + irrf).toFixed(2)}
-
-**Salário Líquido:**
-- Valor a Receber:    R$ ${salarioLiquido.toFixed(2)}
-
-**Encargos da Empresa:**
-- FGTS (8%):          R$ ${fgts.toFixed(2)}
-`.trim();
-
-            document.getElementById('resultado').value = resultado;
         }
-        
-        // --- Inicialização ---
-        window.onload = () => {
-            popularTabelaHorarios();
-            
-            // Event listener para o botão de copiar
-            document.getElementById('copyButton').addEventListener('click', () => {
-                const resultadoText = document.getElementById('resultado');
-                resultadoText.select();
-                document.execCommand('copy');
-                // Feedback visual para o usuário
-                const copyButton = document.getElementById('copyButton');
-                const originalText = copyButton.textContent;
-                copyButton.textContent = 'Copiado!';
-                setTimeout(() => {
-                    copyButton.textContent = originalText;
-                }, 1500);
-            });
-        };
+
+        // ============================================
+        // INICIALIZAÇÃO
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Listeners do formulário
+            const form = document.getElementById('formRescisao');
+            form.addEventListener('submit', processarFormulario);
+
+            // Listener para mudança no motivo de desligamento
+            const motivoSelect = document.getElementById('motivoDesligamento');
+            motivoSelect.addEventListener('change', atualizarCamposCondicionais);
+
+            // Inicializa campos condicionais
+            atualizarCamposCondicionais();
+
+            // Define datas padrão para facilitar testes
+            const hoje = new Date();
+            const umAnoAtras = new Date(hoje);
+            umAnoAtras.setFullYear(umAnoAtras.getFullYear() - 1);
+
+            document.getElementById('dataDemissao').valueAsDate = hoje;
+            document.getElementById('dataAdmissao').valueAsDate = umAnoAtras;
+        });
     </script>
 </body>
 </html>
