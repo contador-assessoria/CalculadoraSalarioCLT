@@ -1,394 +1,1698 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Salário CLT</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Inter (para o corpo) e Fira Code (para o resultado) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#174c40" />
+        <title>Salário em dia · Calculadora CLT 2026</title>
+        <link
+            rel="icon"
+            href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%23174c40%27/%3E%3Ctext x=%279%27 y=%2723%27 fill=%27white%27 font-size=%2723%27%3ES%3C/text%3E%3C/svg%3E"
+        />
+        <style>
+            :root {
+                color-scheme: light;
+                --bg: #f4f6f3;
+                --ink: #172e29;
+                --muted: #596b64;
+                --line: #dce4de;
+                --green: #174c40;
+                --light: #e8f2ec;
+                --amber: #805015;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                background: var(--bg);
+                color: var(--ink);
+                font:
+                    16px/1.5 system-ui,
+                    -apple-system,
+                    "Segoe UI",
+                    sans-serif;
+            }
+            a {
+                color: var(--green);
+                text-underline-offset: 3px;
+            }
+            button,
+            input,
+            select,
+            textarea {
+                font: inherit;
+            }
+            button,
+            a,
+            input,
+            select,
+            summary {
+                touch-action: manipulation;
+            }
+            button {
+                cursor: pointer;
+            }
+            button:disabled {
+                opacity: 0.45;
+                cursor: default;
+            }
+            :focus-visible {
+                outline: 3px solid #cb862c;
+                outline-offset: 3px;
+            }
+            [hidden] {
+                display: none !important;
+            }
+            .wrap {
+                max-width: 1180px;
+                margin: auto;
+                padding: 28px 24px 50px;
+            }
+            .top {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 16px;
+                border-bottom: 1px solid var(--line);
+                padding-bottom: 20px;
+            }
+            .brand {
+                font-weight: 750;
+                letter-spacing: -0.4px;
+            }
+            .mark {
+                display: inline-grid;
+                place-items: center;
+                width: 32px;
+                height: 32px;
+                background: var(--green);
+                color: white;
+                border-radius: 10px;
+                margin-right: 9px;
+            }
+            .tag {
+                font-size: 12px;
+                letter-spacing: 0.07em;
+                text-transform: uppercase;
+                font-weight: 700;
+                color: var(--green);
+            }
+            header {
+                padding: 30px 0 24px;
+            }
+            h1 {
+                font-size: clamp(30px, 4vw, 46px);
+                line-height: 1.13;
+                letter-spacing: -1.5px;
+                max-width: 750px;
+                margin: 10px 0 13px;
+            }
+            p {
+                margin: 8px 0 15px;
+            }
+            .sub {
+                color: var(--muted);
+                max-width: 690px;
+            }
+            .badges {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            .badge {
+                font-size: 12px;
+                padding: 7px 12px;
+                border: 1px solid var(--line);
+                border-radius: 30px;
+                background: white;
+            }
+            .badge.primary {
+                background: var(--light);
+                border-color: #caddcd;
+                color: var(--green);
+            }
+            .layout {
+                display: grid;
+                grid-template-columns: minmax(0, 1.5fr) minmax(310px, 1fr);
+                gap: 22px;
+                align-items: start;
+            }
+            .stack {
+                display: grid;
+                gap: 18px;
+            }
+            .card {
+                background: white;
+                border: 1px solid var(--line);
+                border-radius: 18px;
+                padding: 24px;
+            }
+            .section-title {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin: 0 0 18px;
+                font-size: 18px;
+                letter-spacing: -0.4px;
+            }
+            .num {
+                display: grid;
+                place-items: center;
+                background: var(--light);
+                color: var(--green);
+                border-radius: 9px;
+                width: 29px;
+                height: 29px;
+                font-size: 12px;
+                flex-shrink: 0;
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px;
+            }
+            .full {
+                grid-column: 1/-1;
+            }
+            label {
+                display: block;
+                font-size: 13px;
+                font-weight: 650;
+                margin-bottom: 7px;
+            }
+            input:not([type="checkbox"]),
+            select,
+            textarea {
+                width: 100%;
+                min-width: 0;
+                border: 1px solid #becdc3;
+                border-radius: 9px;
+                background: #fff;
+                color: var(--ink);
+                padding: 11px 12px;
+                min-height: 46px;
+            }
+            input:disabled {
+                background: #f1f4f1;
+                color: #88968e;
+            }
+            input[type="checkbox"] {
+                accent-color: var(--green);
+                width: 18px;
+                height: 18px;
+            }
+            small,
+            .help {
+                font-size: 12px;
+                line-height: 1.55;
+                color: var(--muted);
+            }
+            small {
+                display: block;
+                margin-top: 6px;
+            }
+            .note {
+                background: var(--light);
+                border-radius: 10px;
+                padding: 12px 14px;
+                font-size: 13px;
+                margin-top: 16px;
+            }
+            .actions {
+                display: flex;
+                gap: 9px;
+                flex-wrap: wrap;
+            }
+            .btn {
+                border: 1px solid var(--line);
+                border-radius: 9px;
+                padding: 10px 14px;
+                min-height: 44px;
+                background: white;
+                color: var(--green);
+                font-size: 13px;
+                font-weight: 650;
+            }
+            .btn.main {
+                width: 100%;
+                background: var(--green);
+                color: white;
+                border-color: var(--green);
+                font-size: 16px;
+                padding: 14px;
+            }
+            .btn:hover {
+                filter: brightness(0.96);
+            }
+            details {
+                border-top: 1px solid var(--line);
+                padding-top: 16px;
+                margin-top: 18px;
+            }
+            summary {
+                cursor: pointer;
+                font-weight: 650;
+                font-size: 14px;
+                padding: 5px 0;
+            }
+            details[open] > summary {
+                margin-bottom: 14px;
+            }
+            .day {
+                border-top: 1px solid var(--line);
+                padding: 14px 0 10px;
+            }
+            .day:first-child {
+                border-top: 0;
+            }
+            .day-head {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 9px;
+                gap: 8px;
+                font-size: 13px;
+            }
+            .day-name {
+                font-weight: 650;
+            }
+            .off {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin: 0;
+                font-weight: 450;
+            }
+            .times {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 7px;
+            }
+            .times label {
+                font-size: 10px;
+                color: var(--muted);
+                font-weight: 550;
+            }
+            .times input {
+                padding: 8px 3px;
+                font-size: 13px;
+                min-height: 42px;
+            }
+            .total-hours {
+                font-variant-numeric: tabular-nums;
+                color: var(--green);
+                font-size: 12px;
+            }
+            .hours-banner {
+                display: flex;
+                justify-content: space-between;
+                background: var(--light);
+                border-radius: 10px;
+                padding: 12px;
+                font-size: 13px;
+                margin-top: 10px;
+            }
+            .result {
+                position: sticky;
+                top: 18px;
+            }
+            .hero-result {
+                border-radius: 14px;
+                padding: 23px;
+                background: var(--green);
+                color: #fff;
+                margin-bottom: 18px;
+            }
+            .hero-result .eyebrow {
+                font-size: 12px;
+                color: #d7e8df;
+            }
+            .money {
+                font-size: clamp(30px, 3.2vw, 42px);
+                font-weight: 700;
+                letter-spacing: -1.4px;
+                margin: 5px 0 10px;
+                font-variant-numeric: tabular-nums;
+                overflow-wrap: anywhere;
+            }
+            .hero-result small {
+                color: #d7e8df;
+            }
+            .bar {
+                display: flex;
+                height: 6px;
+                background: #53786c;
+                border-radius: 10px;
+                overflow: hidden;
+                margin: 17px 0 10px;
+            }
+            .bar span {
+                background: #b2dec2;
+                transition: width 0.2s;
+            }
+            .rows {
+                margin: 0;
+            }
+            .row {
+                display: flex;
+                justify-content: space-between;
+                gap: 14px;
+                border-bottom: 1px solid var(--line);
+                padding: 10px 0;
+                font-size: 13px;
+            }
+            .row dt {
+                color: var(--muted);
+            }
+            .row dd {
+                margin: 0;
+                text-align: right;
+                font-weight: 650;
+                font-variant-numeric: tabular-nums;
+            }
+            .row.total dt,
+            .row.total dd {
+                color: var(--green);
+                font-weight: 750;
+            }
+            .result .actions {
+                margin-top: 18px;
+            }
+            .employer {
+                background: var(--bg);
+                border-radius: 10px;
+                padding: 12px;
+                margin-top: 18px;
+            }
+            .employer .row {
+                padding: 5px 0;
+                border: 0;
+            }
+            .employer h3 {
+                font-size: 13px;
+                margin: 0 0 8px;
+            }
+            .alert {
+                padding: 13px 16px;
+                border: 1px solid #e8c88b;
+                border-radius: 12px;
+                background: #fff7e8;
+                color: var(--amber);
+                font-size: 13px;
+                margin-bottom: 16px;
+            }
+            .error {
+                background: #fff0ed;
+                color: #972e22;
+                border-color: #e7bcb5;
+            }
+            .alert ul {
+                margin: 8px 0;
+                padding-left: 18px;
+            }
+            .sources {
+                margin-top: 22px;
+            }
+            .sources ul {
+                padding-left: 18px;
+                font-size: 13px;
+            }
+            .sources li {
+                margin: 8px 0;
+            }
+            .tables {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 12px;
+            }
+            th,
+            td {
+                text-align: left;
+                padding: 8px 4px;
+                border-bottom: 1px solid var(--line);
+            }
+            caption {
+                text-align: left;
+                font-weight: 700;
+                margin-bottom: 7px;
+            }
+            .cct {
+                border-left: 4px solid #7fae93;
+            }
+            .cct h2 {
+                margin: 0 0 7px;
+                font-size: 17px;
+            }
+            .footer {
+                font-size: 12px;
+                color: var(--muted);
+                text-align: center;
+                margin-top: 28px;
+            }
+            .status {
+                font-size: 12px;
+                color: var(--muted);
+                min-height: 18px;
+                margin-top: 10px;
+            }
+            .report {
+                white-space: pre-wrap;
+                overflow-wrap: anywhere;
+                font:
+                    12px/1.65 ui-monospace,
+                    monospace;
+                background: var(--bg);
+                border-radius: 10px;
+                padding: 12px;
+                max-height: 460px;
+                overflow: auto;
+            }
+            .print-only {
+                display: none;
+            }
+            .skip {
+                position: absolute;
+                top: -70px;
+                background: white;
+                padding: 10px;
+                z-index: 10;
+            }
+            .skip:focus {
+                top: 10px;
+            }
+            @media (max-width: 860px) {
+                .layout {
+                    grid-template-columns: 1fr;
+                }
+                .result {
+                    position: static;
+                }
+                .wrap {
+                    max-width: 700px;
+                }
+                .money {
+                    font-size: 38px;
+                }
+            }
+            @media (max-width: 460px) {
+                .wrap {
+                    padding: 18px 14px 32px;
+                }
+                .card {
+                    padding: 18px;
+                    border-radius: 14px;
+                }
+                .grid,
+                .tables {
+                    grid-template-columns: 1fr;
+                }
+                .times {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: 9px;
+                }
+                .times label {
+                    font-size: 11px;
+                }
+                .times input {
+                    padding: 9px;
+                    font-size: 16px;
+                }
+                .top {
+                    font-size: 13px;
+                }
+                .top .tag {
+                    font-size: 10px;
+                }
+                header {
+                    padding-top: 22px;
+                }
+                .badge {
+                    font-size: 11px;
+                }
+                .full {
+                    grid-column: auto;
+                }
+                .money {
+                    font-size: 36px;
+                }
+            }
+            @media print {
+                body {
+                    background: white;
+                }
+                .wrap {
+                    padding: 0;
+                    max-width: none;
+                }
+                .top,
+                header,
+                .layout,
+                .sources,
+                .footer,
+                .skip,
+                #staleYear {
+                    display: none !important;
+                }
+                .print-only {
+                    display: block;
+                    white-space: pre-wrap;
+                    font: 11pt/1.5 sans-serif;
+                    color: black;
+                    overflow-wrap: anywhere;
+                }
+                @page {
+                    margin: 18mm;
+                }
+            }
+        </style>
+    </head>
 
-    <style>
-        /* Aplicando as fontes importadas */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Estilo para a área de resultado, usando uma fonte monoespaçada para alinhamento perfeito */
-        #resultado {
-            font-family: 'Fira Code', monospace;
-            white-space: pre; /* Garante que os espaços sejam preservados */
-            overflow-x: auto; /* Adiciona scroll horizontal se necessário */
-        }
-        /* Remove as setas dos inputs de número */
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
-    </style>
-</head>
-<body class="bg-slate-50 text-slate-800">
-
-    <div class="container mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">Calculadora de Salário CLT</h1>
-            <p class="text-slate-600 mt-2">Preencha os campos abaixo para simular um contrato de trabalho.</p>
-        </header>
-
-        <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-6" role="alert">
-            <strong class="font-bold">Erro:</strong>
-            <span class="block sm:inline" id="error-text"></span>
-        </div>
-
-        <main class="space-y-6">
-            <!-- Seção de Informações do Empregado -->
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h3 class="text-xl font-semibold mb-4 text-slate-800">1. Informações do Empregado</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="nome" class="block text-sm font-medium text-slate-700">Nome do Empregado</label>
-                        <input type="text" id="nome" placeholder="Ex: João da Silva" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <div>
-                        <label for="dataAdm" class="block text-sm font-medium text-slate-700">Data de Admissão (Opcional)</label>
-                        <input type="date" id="dataAdm" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
+    <body>
+        <a class="skip" href="#simulador">Ir para a calculadora</a>
+        <div class="wrap">
+            <div class="top">
+                <div class="brand"><span class="mark" aria-hidden="true">S</span>Salário em dia</div>
+                <span class="tag">Simulador CLT · 2026</span>
+            </div>
+            <header>
+                <div class="tag">Menos dúvida. Mais clareza.</div>
+                <h1>Entenda o salário,<br />do bruto ao líquido.</h1>
+                <p class="sub">
+                    Uma simulação simples de remuneração mensal, adicionais e descontos. Com os números abertos, para
+                    você conferir cada etapa.
+                </p>
+                <div class="badges">
+                    <span class="badge primary">Salário mínimo 2026: <strong>R$ 1.621,00</strong></span
+                    ><span class="badge">Tabelas desde janeiro/2026</span
+                    ><span class="badge">Revisado em 15/09/2026</span>
                 </div>
-            </section>
-
-            <!-- Seção de Horário de Trabalho -->
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h3 class="text-xl font-semibold mb-4 text-slate-800">2. Horário de Trabalho Semanal</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-slate-500">
-                        <thead class="text-xs text-slate-700 uppercase bg-slate-100">
-                            <tr>
-                                <th scope="col" class="px-4 py-3">Dia</th>
-                                <th scope="col" class="px-4 py-3 text-center">Folga</th>
-                                <th scope="col" class="px-4 py-3">Entrada 1</th>
-                                <th scope="col" class="px-4 py-3">Saída Intervalo</th>
-                                <th scope="col" class="px-4 py-3">Entrada 2</th>
-                                <th scope="col" class="px-4 py-3">Saída Final</th>
-                            </tr>
-                        </thead>
-                        <tbody id="horarios-body">
-                            <!-- Linhas da tabela serão geradas pelo JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-                 <p class="text-xs text-slate-500 mt-3"><em>Nota: Se apenas Entrada 1 e Saída Final forem preenchidos, será considerado um único período sem intervalo.</em></p>
-            </section>
-
-            <!-- Seção de Informações Salariais -->
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h3 class="text-xl font-semibold mb-4 text-slate-800">3. Informações Salariais</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="salarioBruto" class="block text-sm font-medium text-slate-700">Salário Bruto de Referência (44h/semana)</label>
-                        <input type="number" id="salarioBruto" placeholder="3000.00" step="0.01" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <div class="flex items-end space-x-6">
-                        <div class="flex items-center">
-                            <input id="insalubridade" type="checkbox" class="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
-                            <label for="insalubridade" class="ml-2 block text-sm text-slate-900">Insalubridade (10%)</label>
+            </header>
+            <div id="staleYear" class="alert" hidden>
+                Esta versão usa tabelas de 2026 e não se atualiza automaticamente. Consulte as fontes antes de usar em
+                outro ano.
+            </div>
+            <noscript>
+                <p class="alert error">Ative o JavaScript do navegador para calcular.</p>
+            </noscript>
+            <main id="simulador" class="layout">
+                <form id="form" class="stack">
+                    <section class="card">
+                        <h2 class="section-title"><span class="num">01</span>Remuneração</h2>
+                        <div class="grid">
+                            <div class="full">
+                                <label for="modo">Como deseja informar o salário?</label>
+                                <select id="modo">
+                                    <option value="fixo">Salário mensal contratado para esta jornada</option>
+                                    <option value="proporcional">
+                                        Simular proporção de uma referência de 44h
+                                    </option></select
+                                ><small id="modoHelp">A jornada não reduz automaticamente o salário contratado.</small>
+                            </div>
+                            <div>
+                                <label for="salario" id="salarioLabel">Salário-base mensal (R$)</label>
+                                <input
+                                    id="salario"
+                                    type="number"
+                                    inputmode="decimal"
+                                    min="0.01"
+                                    max="10000000"
+                                    step="0.01"
+                                    value="3000"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label for="adicional">Adicional ocupacional</label>
+                                <select id="adicional">
+                                    <option value="0">Sem adicional</option>
+                                    <option value="10">Insalubridade · mínimo (10%)</option>
+                                    <option value="20">Insalubridade · médio (20%)</option>
+                                    <option value="40">Insalubridade · máximo (40%)</option>
+                                    <option value="perigo">Periculosidade (30%)</option>
+                                </select>
+                            </div>
+                            <div id="insalConfig" class="full" hidden>
+                                <label for="baseTipo">Base da insalubridade</label>
+                                <select id="baseTipo">
+                                    <option value="minimo">Salário mínimo nacional · R$ 1.621,00</option>
+                                    <option value="outra">Outra base prevista em lei ou norma aplicável</option>
+                                </select>
+                                <div id="baseCustom" hidden style="margin-top: 12px">
+                                    <label for="baseInsal">Base mensal prevista (R$)</label>
+                                    <input
+                                        id="baseInsal"
+                                        type="number"
+                                        inputmode="decimal"
+                                        min="0.01"
+                                        max="10000000"
+                                        step="0.01"
+                                        value="1621"
+                                        disabled
+                                    />
+                                </div>
+                                <small
+                                    >Base padrão: mínimo nacional. Confira se a CCT ou outra norma aplicável assegura
+                                    critério mais favorável. O piso da categoria não substitui a base
+                                    automaticamente.</small
+                                >
+                            </div>
                         </div>
-                        <div class="flex items-center">
-                            <input id="periculosidade" type="checkbox" class="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
-                            <label for="periculosidade" class="ml-2 block text-sm text-slate-900">Periculosidade (30%)</label>
+                        <p class="note" id="adicionalHelp">
+                            Selecione apenas o adicional devido. Insalubridade e periculosidade não são acumuladas na
+                            regra geral.
+                        </p>
+                        <details>
+                            <summary>Dependentes, outros descontos e identificação</summary>
+                            <div class="grid">
+                                <div>
+                                    <label for="dependentes">Dependentes para o IRRF</label>
+                                    <input
+                                        id="dependentes"
+                                        type="number"
+                                        inputmode="numeric"
+                                        min="0"
+                                        max="99"
+                                        step="1"
+                                        value="0"
+                                        required
+                                    /><small>Somente dependentes elegíveis, informados à fonte pagadora.</small>
+                                </div>
+                                <div>
+                                    <label for="outros">Outros descontos mensais (R$)</label>
+                                    <input
+                                        id="outros"
+                                        type="number"
+                                        inputmode="decimal"
+                                        min="0"
+                                        max="10000000"
+                                        step="0.01"
+                                        value="0"
+                                        required
+                                    /><small
+                                        >Benefícios e outros descontos. Não inclua o VT calculado abaixo. Não reduz a
+                                        base tributária.</small
+                                    >
+                                </div>
+                                <div>
+                                    <label for="nome">Nome (opcional)</label>
+                                    <input
+                                        id="nome"
+                                        type="text"
+                                        maxlength="100"
+                                        autocomplete="off"
+                                        placeholder="Nome do empregado"
+                                    />
+                                </div>
+                                <div>
+                                    <label for="dataAdm">Admissão (opcional)</label>
+                                    <input id="dataAdm" type="date" /><small
+                                        >Apenas identificação; não calcula mês parcial.</small
+                                    >
+                                </div>
+                                <div class="full">
+                                    <label for="piso">Piso aplicável à jornada contratada (R$, opcional)</label>
+                                    <input
+                                        id="piso"
+                                        type="number"
+                                        inputmode="decimal"
+                                        min="0"
+                                        max="10000000"
+                                        step="0.01"
+                                        placeholder="Consulte a CCT e eventual piso estadual"
+                                    /><small>Usado para comparação, sem alterar o salário informado.</small>
+                                </div>
+                            </div>
+                        </details>
+                        <details open>
+                            <summary>Vale-transporte</summary>
+                            <label class="off" for="vt">
+                                <input id="vt" type="checkbox" />Incluir vale-transporte na simulação</label
+                            >
+                            <div id="vtConfig" hidden style="margin-top: 16px">
+                                <div class="grid">
+                                    <div>
+                                        <label for="mesVT">Mês do transporte</label>
+                                        <input
+                                            id="mesVT"
+                                            type="month"
+                                            min="2026-01"
+                                            max="2026-12"
+                                            value="2026-09"
+                                            required
+                                            disabled
+                                        />
+                                    </div>
+                                    <div>
+                                        <label for="tarifa">Valor da passagem (R$)</label>
+                                        <input
+                                            id="tarifa"
+                                            type="number"
+                                            inputmode="decimal"
+                                            min="0.01"
+                                            max="1000"
+                                            step="0.01"
+                                            value="5"
+                                            required
+                                            disabled
+                                        /><small>Informe a tarifa efetiva, considerando integração.</small>
+                                    </div>
+                                    <div>
+                                        <label for="viagens">Passagens por dia (ida + volta)</label>
+                                        <input
+                                            id="viagens"
+                                            type="number"
+                                            inputmode="numeric"
+                                            min="1"
+                                            max="20"
+                                            step="1"
+                                            value="2"
+                                            required
+                                            disabled
+                                        />
+                                    </div>
+                                    <div>
+                                        <label for="diasVT">Dias presenciais com transporte</label>
+                                        <input
+                                            id="diasVT"
+                                            type="number"
+                                            inputmode="numeric"
+                                            min="0"
+                                            max="31"
+                                            step="1"
+                                            value="22"
+                                            required
+                                            disabled
+                                        />
+                                    </div>
+                                </div>
+                                <p class="help" id="vtCalendario"></p>
+                                <button id="sugerirVT" class="btn" type="button">Recontar dias pela jornada</button>
+                                <small
+                                    >A contagem usa os dias de trabalho da semana, sem descontar feriados. Ajuste dias
+                                    sem deslocamento. Tarifas diferentes: use o custo diário total como valor e 1
+                                    passagem por dia.</small
+                                >
+                                <details>
+                                    <summary>Ajustar participação do empregado</summary>
+                                    <div class="grid">
+                                        <div>
+                                            <label for="taxaVT">Participação sobre salário-base (%)</label>
+                                            <input
+                                                id="taxaVT"
+                                                type="number"
+                                                inputmode="decimal"
+                                                min="0"
+                                                max="6"
+                                                step="0.01"
+                                                value="6"
+                                                required
+                                                disabled
+                                            /><small>Use percentual menor se houver condição mais favorável.</small>
+                                        </div>
+                                        <div>
+                                            <label for="diasRefVT">Dias previstos no mês completo</label>
+                                            <input
+                                                id="diasRefVT"
+                                                type="number"
+                                                inputmode="numeric"
+                                                min="1"
+                                                max="31"
+                                                step="1"
+                                                value="22"
+                                                required
+                                                disabled
+                                            /><small
+                                                >Ajuste feriados na referência. Dias com VT não podem superar este
+                                                total.</small
+                                            >
+                                        </div>
+                                    </div>
+                                    <small
+                                        >Hipótese de proporcionalidade (art. 115): limite = salário-base × percentual ×
+                                        dias com VT ÷ dias previstos. O desconto fica limitado ao custo das passagens.
+                                        Confirme o critério da CCT/ACT.</small
+                                    >
+                                </details>
+                            </div>
+                        </details>
+                    </section>
+                    <section class="card">
+                        <h2 class="section-title"><span class="num">02</span>Jornada semanal</h2>
+                        <p class="help">
+                            Horário diurno, no mesmo dia, entre 05h e 22h. Para período único, preencha Entrada e Saída
+                            e deixe o intervalo vazio.
+                        </p>
+                        <div class="actions">
+                            <button class="btn" type="button" id="preset40">40h · segunda a sexta</button>
+                            <button class="btn" type="button" id="preset44">44h · com sábado</button>
                         </div>
-                    </div>
-                </div>
-            </section>
-            
-            <button onclick="calcular()" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300">
-                Calcular Resumo
-            </button>
-
-            <!-- Seção de Resultados -->
-            <section class="bg-slate-900 p-6 rounded-xl shadow-sm">
-                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-semibold text-white">4. Resultado da Simulação</h3>
-                    <button id="copyButton" class="bg-slate-700 text-slate-300 text-xs font-semibold py-1 px-3 rounded-md hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-indigo-500 transition-colors">
-                        Copiar
+                        <details>
+                            <summary>Editar horários de cada dia</summary>
+                            <div id="dias"></div>
+                        </details>
+                        <div class="hours-banner"><span>Total semanal</span><strong id="totalHoras">—</strong></div>
+                        <small
+                            >Jornada informada não apura horas extras, banco de horas, feriados ou adicional noturno.
+                            Escalas especiais exigem cálculo próprio.</small
+                        >
+                    </section>
+                    <div id="erro" class="alert error" role="alert" tabindex="-1" hidden></div>
+                    <button class="btn main" type="submit">
+                        Calcular meu resumo <span aria-hidden="true">↗</span>
                     </button>
-                </div>
-                <textarea id="resultado" readonly class="w-full h-96 bg-slate-800 text-slate-300 text-sm p-4 border border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y"></textarea>
+                    <section class="card cct">
+                        <h2>Antes de fechar, consulte a CCT.</h2>
+                        <p class="help">
+                            A Convenção Coletiva de Trabalho pode definir piso, reajustes, benefícios, jornada e base
+                            dos adicionais. Confira categoria, sindicato, município/UF, vigência e termos aditivos.
+                            Consulte também eventual Acordo Coletivo (ACT) da empresa.
+                        </p>
+                        <a
+                            class="btn"
+                            href="https://mediador.trabalho.gov.br/sistemas/mediador/ConsultarInstColetivo/ConsultaBasica"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Consultar no Mediador / MTE ↗</a
+                        ><small
+                            >Pesquise pelo sindicato ou CNPJ e abrangência territorial. A simulação não identifica
+                            automaticamente sua CCT.</small
+                        >
+                    </section>
+                </form>
+                <aside class="card result" aria-labelledby="resultTitle">
+                    <h2 class="section-title" id="resultTitle" tabindex="-1">
+                        <span class="num">03</span>Seu resumo mensal
+                    </h2>
+                    <div id="pending" class="alert" hidden>
+                        Os dados mudaram. Calcule novamente para atualizar o resumo.
+                    </div>
+                    <div id="resultContent">
+                        <div class="hero-result">
+                            <div class="eyebrow">SALÁRIO LÍQUIDO ESTIMADO</div>
+                            <div class="money" id="liquido">—</div>
+                            <div class="bar" aria-hidden="true"><span id="liquidBar" style="width: 0"></span></div>
+                            <small id="liquidPercent">Preencha os dados e calcule.</small>
+                        </div>
+                        <dl class="rows" id="valores"></dl>
+                        <div class="employer">
+                            <h3>Parcelas do empregador</h3>
+                            <dl class="rows">
+                                <div class="row">
+                                    <dt>FGTS · 8%</dt>
+                                    <dd id="fgts">—</dd>
+                                </div>
+                                <div class="row">
+                                    <dt>VT · custo das passagens</dt>
+                                    <dd id="vtTotal">—</dd>
+                                </div>
+                                <div class="row">
+                                    <dt>VT · parcela da empresa</dt>
+                                    <dd id="vtEmpresa">—</dd>
+                                </div>
+                                <div class="row">
+                                    <dt>Bruto + FGTS + VT da empresa</dt>
+                                    <dd id="subtotal">—</dd>
+                                </div>
+                            </dl>
+                            <small
+                                >FGTS não sai do salário. VT é crédito de transporte, não salário em dinheiro. Este
+                                subtotal não é o custo total: faltam encargos patronais, outros benefícios, 13º, férias
+                                e rescisão.</small
+                            >
+                        </div>
+                        <div id="avisos" class="alert" style="margin-top: 18px" hidden></div>
+                        <details>
+                            <summary>Como chegamos ao resultado?</summary>
+                            <pre class="report" id="memoria"></pre>
+                        </details>
+                    </div>
+                    <div class="actions">
+                        <button class="btn export" type="button" id="copiar">Copiar</button>
+                        <button class="btn export" type="button" id="baixar">Baixar .txt</button>
+                        <button class="btn export" type="button" id="imprimir">Imprimir / PDF</button>
+                    </div>
+                    <div id="status" class="status" role="status" aria-live="polite"></div>
+                    <p class="help">
+                        Estimativa de mês completo para empregado CLT comum, com um único vínculo e uma fonte pagadora,
+                        sem verbas variáveis. IRRF considera o pagamento mensal em 2026. Não abrange aprendiz,
+                        doméstico, múltiplos vínculos, pensão alimentícia ou regras especiais.
+                    </p>
+                </aside>
+            </main>
+            <section class="card sources">
+                <h2 class="section-title">Regras abertas. Fontes oficiais.</h2>
+                <p class="help">
+                    Referência fixa de 2026, conferida em 15/09/2026. O enquadramento ocupacional depende de avaliação
+                    técnica. Para uso em folha, confira a CCT e as particularidades com o responsável pela folha.
+                </p>
+                <details>
+                    <summary>Ver tabelas e critérios de cálculo</summary>
+                    <div class="tables">
+                        <table>
+                            <caption>
+                                INSS 2026 · progressivo
+                            </caption>
+                            <thead>
+                                <tr>
+                                    <th>Salário de contribuição</th>
+                                    <th>Alíquota</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Até R$ 1.621,00</td>
+                                    <td>7,5%</td>
+                                </tr>
+                                <tr>
+                                    <td>Até R$ 2.902,84</td>
+                                    <td>9%</td>
+                                </tr>
+                                <tr>
+                                    <td>Até R$ 4.354,27</td>
+                                    <td>12%</td>
+                                </tr>
+                                <tr>
+                                    <td>Até R$ 8.475,55</td>
+                                    <td>14%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table>
+                            <caption>
+                                IRRF 2026 · antes da redução
+                            </caption>
+                            <thead>
+                                <tr>
+                                    <th>Base até (R$)</th>
+                                    <th>Alíquota</th>
+                                    <th>Deduzir (R$)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2.428,80</td>
+                                    <td>0%</td>
+                                    <td>0,00</td>
+                                </tr>
+                                <tr>
+                                    <td>2.826,65</td>
+                                    <td>7,5%</td>
+                                    <td>182,16</td>
+                                </tr>
+                                <tr>
+                                    <td>3.751,05</td>
+                                    <td>15%</td>
+                                    <td>394,16</td>
+                                </tr>
+                                <tr>
+                                    <td>4.664,68</td>
+                                    <td>22,5%</td>
+                                    <td>675,49</td>
+                                </tr>
+                                <tr>
+                                    <td>Acima</td>
+                                    <td>27,5%</td>
+                                    <td>908,73</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="help">
+                        INSS incide por faixa, limitado ao teto. IRRF usa a maior dedução entre INSS + R$ 189,59 por
+                        dependente e R$ 607,20 simplificados, sem somá-las. Até R$ 5.000 de rendimentos tributáveis,
+                        redução limitada ao imposto e a R$ 312,89; até R$ 7.350, redução = 978,62 − 0,133145 ×
+                        rendimentos. Acima, sem redução. O redutor usa o bruto tributável, não a base após deduções.
+                        Retenção mensal de até R$ 10 é dispensada (art. 67 da Lei 9.430/1996). Valores arredondados ao
+                        centavo ao finalizar cada rubrica; diferenças de centavos podem ocorrer na folha.
+                    </p>
+                </details>
+                <details>
+                    <summary>Consultar legislação e fontes</summary>
+                    <ul>
+                        <li>
+                            <a
+                                href="https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/decreto/d12797.htm"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >Decreto 12.797/2025 · salário mínimo de 2026</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                href="https://www.gov.br/inss/pt-br/direitos-e-deveres/inscricao-e-contribuicao/tabela-de-contribuicao-mensal"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >INSS · faixas de contribuição / Portaria MPS/MF 13/2026</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                href="https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas/2026"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >Receita Federal · IRRF e redução de 2026 / Lei 15.270/2025</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                href="https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452compilado.htm"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >CLT · jornada, intervalos e adicionais (arts. 58, 58-A, 59, 66, 67, 71, 192, 193, 195 e
+                                611-A)</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                href="https://sistemas.trt3.jus.br/bd-trt3/handle/11103/13229"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >TRT-3 · base da insalubridade, Súmula 46</a
+                            >
+                            ·
+                            <a
+                                href="https://www.tst.jus.br/pt/indice-tematico-precedentes-qualificados-tst"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >TST · vedação de cumulação, Tema 17</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                href="https://www.caixa.gov.br/beneficios-trabalhador/fgts/perguntas-frequentes/paginas/default.aspx"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >CAIXA · FGTS</a
+                            >
+                            ·
+                            <a
+                                href="https://legis.senado.leg.br/norma/551306/publicacao/34619666"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >Lei 9.430/1996 · art. 67</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                href="https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/decreto/d10854.htm"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >Decreto 10.854/2021 · vale-transporte (arts. 106 a 125)</a
+                            >
+                        </li>
+                    </ul>
+                </details>
             </section>
-        </main>
-    </div>
-
-    <script>
-        const diasDaSemana = [
-            { id: 'segunda', nome: 'Segunda-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
-            { id: 'terca', nome: 'Terça-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
-            { id: 'quarta', nome: 'Quarta-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
-            { id: 'quinta', nome: 'Quinta-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
-            { id: 'sexta', nome: 'Sexta-feira', e1: '08:40', sI: '12:00', e2: '14:00', sF: '18:00', folga: false },
-            { id: 'sabado', nome: 'Sábado', e1: '08:40', sI: '12:00', e2: '', sF: '', folga: false },
-            { id: 'domingo', nome: 'Domingo', e1: '', sI: '', e2: '', sF: '', folga: true },
-        ];
-
-        // Função para exibir erros
-        function showError(message) {
-            const errorDiv = document.getElementById('error-message');
-            const errorText = document.getElementById('error-text');
-            errorText.textContent = message;
-            errorDiv.classList.remove('hidden');
-        }
-
-        // Função para limpar erros
-        function clearError() {
-            const errorDiv = document.getElementById('error-message');
-            errorDiv.classList.add('hidden');
-        }
-
-        // Função para manipular a mudança no checkbox de folga
-        function handleFolgaChange(checkbox) {
-            const row = checkbox.closest('tr');
-            const inputs = row.querySelectorAll('input[type="time"]');
-            const diaId = row.dataset.diaId;
-            const diaInfo = diasDaSemana.find(d => d.id === diaId);
-
-            inputs.forEach(input => {
-                input.disabled = checkbox.checked;
-                if (checkbox.checked) {
-                    input.value = '';
-                } else {
-                    // Preenche com os horários padrão ao desmarcar a folga
-                    const inputType = input.dataset.type;
-                    input.value = diaInfo[inputType] || '';
+            <footer class="footer">
+                Feito para simplificar. Funciona offline; somente os links de consulta precisam de internet. <br />Os
+                dados ficam nesta página e não são enviados nem salvos automaticamente.
+            </footer>
+            <pre id="printReport" class="print-only"></pre>
+        </div>
+        <script>
+            "use strict";
+            // Parâmetros centralizados. Atualizar fontes, textos e testes ao trocar de ano.
+            const REGRAS = Object.freeze({
+                ano: 2026,
+                minimo: 1621,
+                inss: [
+                    [1621, 0.075],
+                    [2902.84, 0.09],
+                    [4354.27, 0.12],
+                    [8475.55, 0.14],
+                ],
+                ir: [
+                    [2428.8, 0, 0],
+                    [2826.65, 0.075, 182.16],
+                    [3751.05, 0.15, 394.16],
+                    [4664.68, 0.225, 675.49],
+                    [Infinity, 0.275, 908.73],
+                ],
+                dependente: 189.59,
+                simplificado: 607.2,
+            });
+            const $ = (id) => document.getElementById(id);
+            // Tolerância relativa corrige representação binária (ex.: 1621 × 7,5% = 121,575).
+            const arred = (n) => Math.round((n + Number.EPSILON * Math.max(1, Math.abs(n))) * 100) / 100;
+            const moeda = (n) => (n === 0 ? 0 : n).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+            const numero = (n) => n.toLocaleString("pt-BR", { maximumFractionDigits: 2 });
+            const duracao = (m) => `${Math.floor(m / 60)}h${String(m % 60).padStart(2, "0")}`;
+            const nomes = [
+                "Segunda-feira",
+                "Terça-feira",
+                "Quarta-feira",
+                "Quinta-feira",
+                "Sexta-feira",
+                "Sábado",
+                "Domingo",
+            ];
+            let ultimoResumo = "";
+            function calcularINSS(bruto) {
+                let anterior = 0,
+                    total = 0;
+                const faixas = [];
+                for (const [limite, taxa] of REGRAS.inss) {
+                    const base = Math.max(0, Math.min(bruto, limite) - anterior);
+                    if (base > 0) {
+                        total += base * taxa;
+                        faixas.push({ base, taxa, valor: base * taxa });
+                    }
+                    anterior = limite;
+                }
+                return { valor: arred(total), faixas };
+            }
+            function calcularIR(bruto, inss, dependentes) {
+                const legais = arred(inss + dependentes * REGRAS.dependente);
+                const deducao = Math.max(legais, REGRAS.simplificado);
+                const tipo = legais >= REGRAS.simplificado ? "Deduções legais" : "Desconto simplificado";
+                const base = arred(Math.max(0, bruto - deducao));
+                const [, taxa, parcela] = REGRAS.ir.find(([limite]) => base <= limite);
+                const antes = arred(Math.max(0, base * taxa - parcela));
+                const limiteReducao =
+                    bruto <= 5000 ? 312.89 : bruto <= 7350 ? Math.max(0, 978.62 - 0.133145 * bruto) : 0;
+                const reducao = arred(Math.min(antes, limiteReducao));
+                const apurado = arred(Math.max(0, antes - reducao));
+                return {
+                    valor: apurado <= 10 ? 0 : apurado,
+                    apurado,
+                    dispensa: apurado > 0 && apurado <= 10,
+                    base,
+                    deducao,
+                    tipo,
+                    legais,
+                    taxa,
+                    parcela,
+                    antes,
+                    reducao,
+                };
+            }
+            function calcularVT(base, { tarifa, viagens, dias, referencia, taxa }) {
+                if (
+                    ![tarifa, viagens, dias, referencia, taxa].every(Number.isFinite) ||
+                    tarifa <= 0 ||
+                    !Number.isInteger(viagens) ||
+                    viagens < 1 ||
+                    !Number.isInteger(dias) ||
+                    dias < 0 ||
+                    !Number.isInteger(referencia) ||
+                    referencia < 1 ||
+                    dias > referencia ||
+                    taxa < 0 ||
+                    taxa > 6
+                )
+                    throw Error(
+                        "Confira os valores do transporte: dias com VT devem estar entre zero e os dias previstos no mês."
+                    );
+                const total = arred(tarifa * viagens * dias),
+                    limite = arred((((base * taxa) / 100) * dias) / referencia),
+                    desconto = Math.min(total, limite);
+                return { total, limite, desconto, empresa: arred(total - desconto) };
+            }
+            function diasCalendario(mes, ativos) {
+                if (!/^2026-(0[1-9]|1[0-2])$/.test(mes)) throw Error("Selecione um mês de 2026 para o transporte.");
+                const [ano, m] = mes.split("-").map(Number);
+                let total = 0;
+                for (let d = 1; d <= new Date(ano, m, 0).getDate(); d++) {
+                    const i = (new Date(ano, m - 1, d).getDay() + 6) % 7;
+                    if (ativos[i]) total++;
+                }
+                return total;
+            }
+            function sugerirDiasVT() {
+                try {
+                    const total = diasCalendario(
+                        $("mesVT").value,
+                        nomes.map((_, i) => !$(`off${i}`).checked)
+                    );
+                    $("diasVT").value = total;
+                    $("diasRefVT").value = total || 1;
+                    $("vtCalendario").textContent =
+                        `Calendário da jornada: ${total} dias em ${$("mesVT").value.split("-").reverse().join("/")}, antes de feriados e ausências.`;
+                } catch {
+                    $("vtCalendario").textContent = "Selecione um mês de 2026.";
+                }
+            }
+            function calcularFolha({
+                salario,
+                minutos,
+                modo,
+                adicional,
+                baseInsal,
+                dependentes,
+                outros,
+                transporte = null,
+            }) {
+                if (
+                    !Number.isFinite(salario) ||
+                    salario <= 0 ||
+                    !Number.isFinite(minutos) ||
+                    minutos <= 0 ||
+                    minutos > 2640
+                )
+                    throw Error("Salário ou jornada inválidos.");
+                const base = arred(modo === "proporcional" ? (salario * minutos) / 2640 : salario);
+                const extra = arred(adicional === "perigo" ? base * 0.3 : (baseInsal * Number(adicional)) / 100);
+                const bruto = arred(base + extra),
+                    inss = calcularINSS(bruto),
+                    ir = calcularIR(bruto, inss.valor, dependentes);
+                const vt = transporte ? calcularVT(base, transporte) : { total: 0, limite: 0, desconto: 0, empresa: 0 };
+                const liquido = arred(bruto - inss.valor - ir.valor - outros - vt.desconto);
+                if (liquido < 0) throw Error("Os descontos informados ultrapassam o valor disponível do salário.");
+                return { base, extra, bruto, inss, ir, liquido, vt, fgts: arred(bruto * 0.08) };
+            }
+            function lerDia(valores, folga, nome) {
+                if (folga) return { nome, folga: true, minutos: 0 };
+                const [entrada, inicio, fim, saida] = valores;
+                if (!entrada || !saida) throw Error(`${nome}: preencha Entrada e Saída ou marque Folga.`);
+                if (Boolean(inicio) !== Boolean(fim))
+                    throw Error(`${nome}: preencha os dois campos de intervalo ou deixe ambos vazios.`);
+                const converter = (t) => {
+                    if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(t)) throw Error(`${nome}: horário inválido.`);
+                    return Number(t.slice(0, 2)) * 60 + Number(t.slice(3));
+                };
+                const e = converter(entrada),
+                    s = converter(saida),
+                    i = inicio ? converter(inicio) : null,
+                    f = fim ? converter(fim) : null;
+                if (s <= e)
+                    throw Error(
+                        `${nome}: a saída deve ser posterior à entrada, no mesmo dia. Turnos que atravessam a meia-noite exigem cálculo próprio.`
+                    );
+                if (e < 300 || s > 1320)
+                    throw Error(
+                        `${nome}: este simulador cobre apenas horários entre 05h e 22h. O trabalho noturno exige adicional e hora reduzida próprios.`
+                    );
+                if (i !== null && !(e < i && i < f && f < s))
+                    throw Error(`${nome}: use a ordem Entrada → Início do intervalo → Fim do intervalo → Saída.`);
+                const pausa = i === null ? 0 : f - i;
+                return {
+                    nome,
+                    folga: false,
+                    minutos: s - e - pausa,
+                    pausa,
+                    entrada: e,
+                    saida: s,
+                    texto: inicio ? `${entrada}–${inicio} / ${fim}–${saida}` : `${entrada}–${saida}`,
+                };
+            }
+            function lerJornada() {
+                return nomes.map((nome, index) =>
+                    lerDia(
+                        ["e", "i", "f", "s"].map((k) => $(`${k}${index}`).value),
+                        $(`off${index}`).checked,
+                        nome
+                    )
+                );
+            }
+            function atualizarHoras() {
+                try {
+                    const dias = lerJornada();
+                    $("totalHoras").textContent = duracao(dias.reduce((s, d) => s + d.minutos, 0));
+                    dias.forEach((d, i) => ($(`total${i}`).textContent = d.folga ? "Folga" : duracao(d.minutos)));
+                } catch (e) {
+                    $("totalHoras").textContent = "Revisar horários";
+                    nomes.forEach((_, i) => ($(`total${i}`).textContent = ""));
+                }
+            }
+            function desatualizar() {
+                ultimoResumo = "";
+                $("printReport").textContent = "Dados alterados. Calcule novamente antes de imprimir.";
+                $("pending").hidden = false;
+                $("resultContent").hidden = true;
+                document.querySelectorAll(".export").forEach((b) => (b.disabled = true));
+                $("status").textContent = "";
+                $("erro").hidden = true;
+            }
+            function sincronizar() {
+                $("vtConfig").hidden = !$("vt").checked;
+                ["mesVT", "tarifa", "viagens", "diasVT", "taxaVT", "diasRefVT"].forEach(
+                    (id) => ($(id).disabled = !$("vt").checked)
+                );
+                const insal = ["10", "20", "40"].includes($("adicional").value),
+                    custom = insal && $("baseTipo").value === "outra";
+                $("insalConfig").hidden = !insal;
+                $("baseCustom").hidden = !custom;
+                $("baseInsal").disabled = !custom;
+                $("baseInsal").required = custom;
+                const proporcional = $("modo").value === "proporcional";
+                $("salarioLabel").textContent = proporcional
+                    ? "Referência mensal para 44h (R$)"
+                    : "Salário-base mensal (R$)";
+                $("modoHelp").textContent = proporcional
+                    ? "Estimativa: referência × horas semanais ÷ 44. Use somente quando a proporcionalidade for juridicamente aplicável; não autoriza redução de contrato existente."
+                    : "A jornada não reduz automaticamente o salário contratado.";
+                $("adicionalHelp").textContent = insal
+                    ? "Insalubridade depende de enquadramento e avaliação técnica. Nesta simulação de mês completo, o percentual incide sobre a base mensal integral, sem redução automática pela jornada."
+                    : $("adicional").value === "perigo"
+                      ? "Periculosidade: 30% sobre o salário-base efetivo, sem outros adicionais. Exige enquadramento técnico; regras especiais e direitos de categorias específicas precisam de conferência."
+                      : "Selecione apenas o adicional devido. Insalubridade e periculosidade não são acumuladas na regra geral.";
+            }
+            function criarDias() {
+                nomes.forEach((nome, i) => {
+                    const dia = document.createElement("div");
+                    dia.className = "day";
+                    // Só constantes internas entram no HTML. Dados do usuário são renderizados com textContent.
+                    dia.innerHTML = `<div class="day-head"><span class="day-name">${nome}</span><span class="total-hours" id="total${i}"></span><label class="off" for="off${i}"><input type="checkbox" id="off${i}">Folga</label></div><div class="times">${[
+                        ["e", "Entrada"],
+                        ["i", "Início intervalo"],
+                        ["f", "Fim intervalo"],
+                        ["s", "Saída"],
+                    ]
+                        .map(
+                            ([k, label]) =>
+                                `<div><label for="${k}${i}">${label}</label><input type="time" id="${k}${i}" aria-label="${nome}: ${label}" step="60"></div>`
+                        )
+                        .join("")}</div>`;
+                    $("dias").appendChild(dia);
+                    $(`off${i}`).addEventListener("change", () => {
+                        ["e", "i", "f", "s"].forEach((k) => ($(`${k}${i}`).disabled = $(`off${i}`).checked));
+                    });
+                });
+            }
+            function preset(tipo) {
+                nomes.forEach((_, i) => {
+                    const folga = tipo === 40 ? i >= 5 : i === 6;
+                    const valores = i === 5 ? ["08:00", "", "", "12:00"] : ["08:00", "12:00", "13:00", "17:00"];
+                    $(`off${i}`).checked = folga;
+                    ["e", "i", "f", "s"].forEach((k, j) => {
+                        $(`${k}${i}`).value = valores[j];
+                        $(`${k}${i}`).disabled = folga;
+                    });
+                });
+                atualizarHoras();
+                sugerirDiasVT();
+                desatualizar();
+            }
+            function campo(id, opcional = false) {
+                const el = $(id);
+                if (opcional && el.value === "") return 0;
+                const n = el.valueAsNumber;
+                if (!Number.isFinite(n) || !el.checkValidity())
+                    throw Error(`Confira o campo ${document.querySelector(`label[for="${id}"]`).textContent}.`);
+                return n;
+            }
+            function gerarAvisos(dias, minutos, folha, piso, modo) {
+                const avisos = [];
+                if (modo === "proporcional")
+                    avisos.push(
+                        "Proporcionalidade é hipótese de simulação. Confirme contrato, regime de jornada, piso e CCT antes de aplicar."
+                    );
+                if (folha.base < REGRAS.minimo)
+                    avisos.push(
+                        "Salário-base inferior ao mínimo mensal. Verifique se há proporcionalidade válida, piso e eventual complementação previdenciária."
+                    );
+                if (piso && folha.base < piso)
+                    avisos.push("Salário-base inferior ao piso informado para esta jornada.");
+                if (!piso) avisos.push("Piso da categoria não conferido. Consulte a CCT/ACT e eventual piso estadual.");
+                const longos = dias.filter((d) => d.minutos > 480);
+                if (longos.length)
+                    avisos.push(
+                        `Mais de 8h em ${longos.map((d) => d.nome).join(", ")}: confira compensação ou horas extras; não calculadas aqui.`
+                    );
+                const intervalos = dias.filter(
+                    (d) =>
+                        !d.folga &&
+                        ((d.minutos > 360 && d.pausa < 60) ||
+                            (d.minutos > 240 && d.minutos <= 360 && d.pausa < 15) ||
+                            d.pausa > 120)
+                );
+                if (intervalos.length)
+                    avisos.push(
+                        `Revisar intervalos: ${intervalos.map((d) => d.nome).join(", ")}. Compare com os limites gerais e a norma coletiva aplicável.`
+                    );
+                const ativos = dias.map((d, i) => ({ ...d, index: i })).filter((d) => !d.folga);
+                if (ativos.length === 7) avisos.push("Sem folga semanal: confira repouso de 24h consecutivas.");
+                for (let i = 0; i < ativos.length; i++) {
+                    const atual = ativos[i],
+                        seguinte = ativos[(i + 1) % ativos.length];
+                    let delta = seguinte.index - atual.index;
+                    if (delta <= 0) delta += 7;
+                    if (delta * 1440 + seguinte.entrada - atual.saida < 660) {
+                        avisos.push("Há descanso inferior a 11h entre jornadas na semana informada.");
+                        break;
+                    }
+                }
+                if (folha.ir.dispensa)
+                    avisos.push(
+                        `IR apurado de ${moeda(folha.ir.apurado)}: retenção dispensada por não superar R$ 10,00.`
+                    );
+                return avisos;
+            }
+            function calcular(event) {
+                if (event) event.preventDefault();
+                try {
+                    if (!$("form").reportValidity()) {
+                        desatualizar();
+                        return;
+                    }
+                    const dias = lerJornada(),
+                        minutos = dias.reduce((s, d) => s + d.minutos, 0);
+                    if (!minutos) throw Error("Informe ao menos um dia de trabalho.");
+                    if (minutos > 2640)
+                        throw Error(
+                            "A jornada ultrapassa 44h semanais. Separe a jornada contratual das horas extras; este simulador não apura horas extras."
+                        );
+                    const salario = campo("salario"),
+                        dependentes = campo("dependentes"),
+                        outros = campo("outros"),
+                        piso = campo("piso", true),
+                        modo = $("modo").value,
+                        adicional = $("adicional").value;
+                    const baseInsal = !$("baseInsal").disabled ? campo("baseInsal") : REGRAS.minimo;
+                    const transporte = $("vt").checked
+                        ? {
+                              tarifa: campo("tarifa"),
+                              viagens: campo("viagens"),
+                              dias: campo("diasVT"),
+                              referencia: campo("diasRefVT"),
+                              taxa: campo("taxaVT"),
+                          }
+                        : null;
+                    if (transporte) {
+                        diasCalendario(
+                            $("mesVT").value,
+                            nomes.map((_, i) => !$(`off${i}`).checked)
+                        );
+                        const m = Number($("mesVT").value.slice(5));
+                        if (transporte.referencia > new Date(2026, m, 0).getDate())
+                            throw Error("Os dias previstos excedem o número de dias do mês escolhido.");
+                    }
+                    const r = calcularFolha({
+                        salario,
+                        minutos,
+                        modo,
+                        adicional,
+                        baseInsal,
+                        dependentes,
+                        outros,
+                        transporte,
+                    });
+                    const avisos = gerarAvisos(dias, minutos, r, piso, modo);
+                    const adicionalNome =
+                        adicional === "perigo"
+                            ? "Periculosidade · 30%"
+                            : adicional === "0"
+                              ? "Sem adicional"
+                              : `Insalubridade · ${adicional}%`;
+                    const linhas = [
+                        ["Salário-base efetivo", r.base],
+                        [adicionalNome, r.extra],
+                        ["Bruto tributável", r.bruto],
+                        ["INSS progressivo", -r.inss.valor],
+                        ["IRRF retido", -r.ir.valor],
+                        ["Outros descontos", -outros],
+                        ["Líquido estimado", r.liquido],
+                    ];
+                    linhas.splice(5, 0, ["Vale-transporte · empregado", -r.vt.desconto]);
+                    $("valores").replaceChildren();
+                    linhas.forEach(([label, value], i) => {
+                        const row = document.createElement("div");
+                        row.className = "row" + (i === 2 || i === linhas.length - 1 ? " total" : "");
+                        const dt = document.createElement("dt"),
+                            dd = document.createElement("dd");
+                        dt.textContent = label;
+                        dd.textContent = moeda(value);
+                        row.append(dt, dd);
+                        $("valores").appendChild(row);
+                    });
+                    $("liquido").textContent = moeda(r.liquido);
+                    $("fgts").textContent = moeda(r.fgts);
+                    $("vtTotal").textContent = moeda(r.vt.total);
+                    $("vtEmpresa").textContent = moeda(r.vt.empresa);
+                    $("subtotal").textContent = moeda(arred(r.bruto + r.fgts + r.vt.empresa));
+                    $("liquidBar").style.width = `${(r.liquido / r.bruto) * 100}%`;
+                    $("liquidPercent").textContent =
+                        `${numero((r.liquido / r.bruto) * 100)}% do bruto fica disponível após os descontos informados.`;
+                    $("avisos").replaceChildren();
+                    $("avisos").hidden = !avisos.length;
+                    if (avisos.length) {
+                        const strong = document.createElement("strong");
+                        strong.textContent = "Pontos para conferir";
+                        const ul = document.createElement("ul");
+                        avisos.forEach((a) => {
+                            const li = document.createElement("li");
+                            li.textContent = a;
+                            ul.appendChild(li);
+                        });
+                        $("avisos").append(strong, ul);
+                    }
+                    const baseExp =
+                        modo === "proporcional"
+                            ? `${moeda(salario)} × ${numero(minutos / 60)}h ÷ 44h = ${moeda(r.base)}`
+                            : `Salário mensal contratado: ${moeda(r.base)}`;
+                    const memoria = [
+                        baseExp,
+                        adicional === "perigo"
+                            ? `Periculosidade: ${moeda(r.base)} × 30% = ${moeda(r.extra)}`
+                            : adicional === "0"
+                              ? "Sem adicional ocupacional."
+                              : `Insalubridade: ${moeda(baseInsal)} × ${adicional}% = ${moeda(r.extra)}`,
+                        `Bruto tributável: ${moeda(r.bruto)}`,
+                        "",
+                        "INSS — parcelas com 5 casas, sem arredondamento intermediário:",
+                        ...r.inss.faixas.map(
+                            (f) =>
+                                `${moeda(f.base)} × ${numero(f.taxa * 100)}% = R$ ${f.valor.toLocaleString("pt-BR", { minimumFractionDigits: 5, maximumFractionDigits: 5 })}`
+                        ),
+                        `INSS total (arredondado ao final): ${moeda(r.inss.valor)}`,
+                        "",
+                        `IRRF — deduções legais: ${moeda(r.ir.legais)}`,
+                        `Simplificado disponível: ${moeda(REGRAS.simplificado)}`,
+                        `Mais vantajoso: ${r.ir.tipo} (${moeda(r.ir.deducao)})`,
+                        `Base IRRF: ${moeda(r.ir.base)}`,
+                        `Tabela: ${numero(r.ir.taxa * 100)}% − parcela de ${moeda(r.ir.parcela)}`,
+                        `Imposto antes da redução: ${moeda(r.ir.antes)}`,
+                        `Redução 2026 sobre rendimento bruto: ${moeda(r.ir.reducao)}`,
+                        `Imposto após redução: ${moeda(r.ir.apurado)}`,
+                        `IRRF retido: ${moeda(r.ir.valor)}${r.ir.dispensa ? " (dispensa até R$ 10)" : ""}`,
+                        "",
+                        `FGTS: ${moeda(r.bruto)} × 8% = ${moeda(r.fgts)}`,
+                    ].join("\n");
+                    const memoriaVT = transporte
+                        ? `\n\nVALE-TRANSPORTE — ${$("mesVT").value}\n${moeda(transporte.tarifa)} × ${transporte.viagens} passagens/dia × ${transporte.dias} dias = ${moeda(r.vt.total)}\nLimite proporcional: ${moeda(r.base)} × ${numero(transporte.taxa)}% × ${transporte.dias}/${transporte.referencia} = ${moeda(r.vt.limite)}\nEmpregado (menor entre custo e limite): ${moeda(r.vt.desconto)}\nEmpresa: ${moeda(r.vt.empresa)}\nDias ajustáveis; calendário não exclui feriados. VT não integra bases de INSS, IRRF ou FGTS.\nSubtotal bruto + FGTS + VT da empresa: ${moeda(arred(r.bruto + r.fgts + r.vt.empresa))}`
+                        : "\n\nVale-transporte não selecionado.";
+                    $("memoria").textContent = memoria + memoriaVT;
+                    const adm = $("dataAdm").value;
+                    ultimoResumo = [
+                        "SALÁRIO EM DIA — SIMULAÇÃO CLT 2026",
+                        "Tabelas de janeiro/2026. Revisão: 15/09/2026.",
+                        `Gerado em: ${new Date().toLocaleString("pt-BR")}`,
+                        `Nome: ${$("nome").value.trim() || "Não informado"}`,
+                        `Admissão: ${adm ? adm.split("-").reverse().join("/") : "Não informada"} (apenas identificação)`,
+                        `Modo: ${modo === "proporcional" ? "Proporcional à referência de 44h" : "Mensal contratado"}`,
+                        `Piso informado: ${piso ? moeda(piso) : "Não informado"}`,
+                        "",
+                        `JORNADA — ${duracao(minutos)} semanais`,
+                        ...dias.map((d) => `${d.nome}: ${d.folga ? "Folga" : d.texto + " · " + duracao(d.minutos)}`),
+                        "",
+                        "REMUNERAÇÃO",
+                        ...linhas.map(([label, value]) => `${label}: ${moeda(value)}`),
+                        `FGTS do empregador: ${moeda(r.fgts)}`,
+                        `VT total: ${moeda(r.vt.total)}; empresa: ${moeda(r.vt.empresa)}`,
+                        `Subtotal bruto + FGTS + VT da empresa: ${moeda(arred(r.bruto + r.fgts + r.vt.empresa))} (não é custo total)`,
+                        "",
+                        "MEMÓRIA DE CÁLCULO",
+                        memoria + memoriaVT,
+                        "",
+                        "PONTOS PARA CONFERIR",
+                        ...avisos,
+                        "",
+                        "ESCOPO",
+                        "Mês completo, empregado CLT comum, um vínculo e uma fonte pagadora. Sem horas extras, noturno, feriados, verbas variáveis, pensão, férias, 13º, outros benefícios ou encargos patronais no subtotal. Não calcula admissão proporcional. Insalubridade sobre base mensal integral. A apuração anual do IR pode diferir. Consulte CCT/ACT e responsável pela folha.",
+                        "CCT: https://mediador.trabalho.gov.br/sistemas/mediador/ConsultarInstColetivo/ConsultaBasica",
+                        "INSS: https://www.gov.br/inss/pt-br/direitos-e-deveres/inscricao-e-contribuicao/tabela-de-contribuicao-mensal",
+                        "IRRF: https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas/2026",
+                    ].join("\n");
+                    $("printReport").textContent = ultimoResumo;
+                    $("pending").hidden = true;
+                    $("resultContent").hidden = false;
+                    $("erro").hidden = true;
+                    document.querySelectorAll(".export").forEach((b) => (b.disabled = false));
+                    $("status").textContent = event
+                        ? "Resumo atualizado."
+                        : "Exemplo inicial: salário de R$ 3.000,00 e jornada de 40h.";
+                    atualizarHoras();
+                    if (event && window.matchMedia("(max-width:860px)").matches) {
+                        $("resultTitle").focus({ preventScroll: true });
+                        $("resultTitle").scrollIntoView({ block: "start" });
+                    }
+                } catch (e) {
+                    desatualizar();
+                    $("erro").textContent = e.message;
+                    $("erro").hidden = false;
+                    if (event) $("erro").focus();
+                }
+            }
+            criarDias();
+            preset(40);
+            sincronizar();
+            sugerirDiasVT();
+            $("form").addEventListener("input", () => {
+                sincronizar();
+                atualizarHoras();
+                desatualizar();
+            });
+            $("form").addEventListener("change", (event) => {
+                sincronizar();
+                if (event.target.id === "mesVT" || event.target.id.startsWith("off")) sugerirDiasVT();
+                atualizarHoras();
+                desatualizar();
+            });
+            $("sugerirVT").addEventListener("click", () => {
+                sugerirDiasVT();
+                desatualizar();
+            });
+            $("form").addEventListener("submit", calcular);
+            $("preset40").addEventListener("click", () => preset(40));
+            $("preset44").addEventListener("click", () => preset(44));
+            $("copiar").addEventListener("click", async () => {
+                if (!ultimoResumo) return;
+                try {
+                    if (!navigator.clipboard) throw Error("clipboard");
+                    await navigator.clipboard.writeText(ultimoResumo);
+                    $("status").textContent = "Resumo copiado.";
+                } catch {
+                    const area = document.createElement("textarea");
+                    area.value = ultimoResumo;
+                    area.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px";
+                    document.body.appendChild(area);
+                    area.select();
+                    let ok = false;
+                    try {
+                        ok = document.execCommand("copy");
+                    } catch {}
+                    area.remove();
+                    $("copiar").focus();
+                    $("status").textContent = ok
+                        ? "Resumo copiado."
+                        : "Cópia indisponível neste navegador. Use Baixar .txt.";
                 }
             });
-        }
-
-        // Função para gerar a tabela de horários dinamicamente
-        function popularTabelaHorarios() {
-            const tbody = document.getElementById('horarios-body');
-            tbody.innerHTML = ''; // Limpa a tabela antes de popular
-
-            diasDaSemana.forEach(dia => {
-                const tr = document.createElement('tr');
-                tr.className = 'bg-white border-b';
-                tr.dataset.diaId = dia.id;
-
-                tr.innerHTML = `
-                    <td class="px-4 py-3 font-medium text-slate-900">${dia.nome}</td>
-                    <td class="px-4 py-3 text-center">
-                        <input type="checkbox" class="folga h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500" id="folga${dia.id}" ${dia.folga ? 'checked' : ''}>
-                    </td>
-                    <td class="px-4 py-3"><input type="time" data-type="e1" id="${dia.id}Entrada1" value="${dia.e1}" ${dia.folga ? 'disabled' : ''} class="w-full bg-slate-50 border-slate-200 rounded-md text-sm p-1 disabled:bg-slate-200 disabled:cursor-not-allowed"></td>
-                    <td class="px-4 py-3"><input type="time" data-type="sI" id="${dia.id}SaidaIntervalo" value="${dia.sI}" ${dia.folga ? 'disabled' : ''} class="w-full bg-slate-50 border-slate-200 rounded-md text-sm p-1 disabled:bg-slate-200 disabled:cursor-not-allowed"></td>
-                    <td class="px-4 py-3"><input type="time" data-type="e2" id="${dia.id}Entrada2" value="${dia.e2}" ${dia.folga ? 'disabled' : ''} class="w-full bg-slate-50 border-slate-200 rounded-md text-sm p-1 disabled:bg-slate-200 disabled:cursor-not-allowed"></td>
-                    <td class="px-4 py-3"><input type="time" data-type="sF" id="${dia.id}SaidaFinal" value="${dia.sF}" ${dia.folga ? 'disabled' : ''} class="w-full bg-slate-50 border-slate-200 rounded-md text-sm p-1 disabled:bg-slate-200 disabled:cursor-not-allowed"></td>
-                `;
-                tbody.appendChild(tr);
+            $("baixar").addEventListener("click", () => {
+                if (!ultimoResumo) return;
+                const url = URL.createObjectURL(
+                    new Blob(["\ufeff" + ultimoResumo], { type: "text/plain;charset=utf-8" })
+                );
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "resumo-clt-2026.txt";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                $("status").textContent = "Download do resumo solicitado.";
             });
-
-            // Adiciona os event listeners para os checkboxes
-            document.querySelectorAll('.folga').forEach(checkbox => {
-                checkbox.addEventListener('change', () => handleFolgaChange(checkbox));
+            $("imprimir").addEventListener("click", () => {
+                if (ultimoResumo) window.print();
             });
-        }
-        
-        // Função para capitalizar a primeira letra
-        function capitalize(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
-        }
-
-        // Função para preencher com espaços e garantir alinhamento
-        function pad(text, length) {
-            return String(text).padEnd(length, ' ');
-        }
-
-        function calcular() {
-            clearError(); // Limpa erros anteriores
-            
-            // --- Coleta de Dados ---
-            const nome = document.getElementById('nome').value.trim();
-            const dataAdm = document.getElementById('dataAdm').value;
-            const salarioBrutoReferencia = parseFloat(document.getElementById('salarioBruto').value);
-            const insalubridade = document.getElementById('insalubridade').checked;
-            const periculosidade = document.getElementById('periculosidade').checked;
-
-            // --- Validação ---
-            if (!salarioBrutoReferencia || salarioBrutoReferencia <= 0) {
-                showError('Por favor, insira um salário bruto de referência válido.');
-                return;
-            }
-
-            // --- Cálculos de Horas ---
-            let totalHorasSemanais = 0;
-            const detalhesHorarios = {};
-
-            function timeToMinutes(time) {
-                if (!time) return 0;
-                const [h, m] = time.split(':').map(Number);
-                return h * 60 + m;
-            }
-
-            try {
-                diasDaSemana.forEach(dia => {
-                    const folga = document.getElementById(`folga${dia.id}`).checked;
-                    if (folga) {
-                        detalhesHorarios[dia.id] = { folga: true, nome: dia.nome };
-                        return;
-                    }
-
-                    const e1 = document.getElementById(`${dia.id}Entrada1`).value;
-                    const sI = document.getElementById(`${dia.id}SaidaIntervalo`).value;
-                    const e2 = document.getElementById(`${dia.id}Entrada2`).value;
-                    const sF = document.getElementById(`${dia.id}SaidaFinal`).value;
-
-                    if (!e1 || !sF) {
-                        detalhesHorarios[dia.id] = { folga: true, nome: dia.nome };
-                        return;
-                    }
-
-                    const e1m = timeToMinutes(e1);
-                    const sIm = timeToMinutes(sI);
-                    const e2m = timeToMinutes(e2);
-                    const sFm = timeToMinutes(sF);
-
-                    let horasDia = 0;
-                    if (sIm > e1m && sFm > e2m && e2m > sIm) { // Dois períodos
-                        horasDia = ((sIm - e1m) + (sFm - e2m)) / 60;
-                    } else { // Um período
-                        horasDia = (sFm - e1m) / 60;
-                    }
-
-                    if (horasDia < 0) throw new Error(`Horários inválidos para ${dia.nome}.`);
-                    
-                    totalHorasSemanais += horasDia;
-                    
-                    detalhesHorarios[dia.id] = {
-                        folga: false,
-                        nome: dia.nome,
-                        horarioStr: (sI && e2) ? `${e1} - ${sI}, ${e2} - ${sF}` : `${e1} - ${sF}`,
-                        total: horasDia.toFixed(2)
-                    };
-                });
-            } catch (error) {
-                showError(error.message);
-                return;
-            }
-
-            // --- Cálculos Salariais Proporcionais ---
-            const horasSemanaisPadrao = 44.0;
-            // O salário proporcional é calculado com base na carga horária semanal.
-            const salarioProporcional = (totalHorasSemanais / horasSemanaisPadrao) * salarioBrutoReferencia;
-
-            // Adicionais são calculados sobre o salário de referência (não proporcional).
-            const adicionalInsalubridade = insalubridade ? salarioBrutoReferencia * 0.10 : 0;
-            const adicionalPericulosidade = periculosidade ? salarioBrutoReferencia * 0.30 : 0;
-
-            // A base de cálculo para descontos é o salário proporcional mais os adicionais.
-            const salarioBaseCalculo = salarioProporcional + adicionalInsalubridade + adicionalPericulosidade;
-
-            // Cálculo INSS (Tabela 2024 - exemplo)
-            let inss = 0;
-            if (salarioBaseCalculo <= 1412.00) {
-                inss = salarioBaseCalculo * 0.075;
-            } else if (salarioBaseCalculo <= 2666.68) {
-                inss = (1412.00 * 0.075) + ((salarioBaseCalculo - 1412.00) * 0.09);
-            } else if (salarioBaseCalculo <= 4000.03) {
-                inss = (1412.00 * 0.075) + ((2666.68 - 1412.00) * 0.09) + ((salarioBaseCalculo - 4000.03) * 0.12);
-            } else if (salarioBaseCalculo <= 7786.02) {
-                inss = (1412.00 * 0.075) + ((2666.68 - 1412.00) * 0.09) + ((4000.03 - 2666.68) * 0.12) + ((salarioBaseCalculo - 4000.03) * 0.14);
-            } else {
-                inss = 908.85; // Teto do INSS
-            }
-
-            // Cálculo IRRF (Tabela 2024 - exemplo)
-            const baseIRRF = salarioBaseCalculo - inss;
-            let irrf = 0;
-            if (baseIRRF > 2259.20 && baseIRRF <= 2826.65) {
-                irrf = (baseIRRF * 0.075) - 169.44;
-            } else if (baseIRRF > 2826.65 && baseIRRF <= 3751.05) {
-                irrf = (baseIRRF * 0.15) - 381.44;
-            } else if (baseIRRF > 3751.05 && baseIRRF <= 4664.68) {
-                irrf = (baseIRRF * 0.225) - 662.77;
-            } else if (baseIRRF > 4664.68) {
-                irrf = (baseIRRF * 0.275) - 896.00;
-            }
-            irrf = Math.max(0, irrf);
-
-            // FGTS é calculado sobre a remuneração total (salário proporcional + adicionais).
-            const fgts = salarioBaseCalculo * 0.08;
-            const salarioLiquido = salarioBaseCalculo - inss - irrf;
-
-            // --- Formatação do Resultado ---
-            const maiorDia = Math.max(...diasDaSemana.map(d => d.nome.length));
-            const colDia = maiorDia + 4;
-            const colHorario = 38;
-            
-            let horariosResumo = `${pad('Dia', colDia)}${pad('Horários', colHorario)}Total\n`;
-            horariosResumo += `${'-'.repeat(colDia-1)} ${'-'.repeat(colHorario-1)} ${'-'.repeat(5)}\n`;
-            
-            Object.values(detalhesHorarios).forEach(detalhe => {
-                const dia = pad(detalhe.nome, colDia);
-                const horario = pad(detalhe.folga ? 'Folga' : detalhe.horarioStr, colHorario);
-                const total = detalhe.folga ? '0.00h' : `${detalhe.total}h`;
-                horariosResumo += `${dia}${horario}${total}\n`;
-            });
-
-            const resultado = `
-* Resumo de Contrato *
-
-**Informações do Empregado:**
-- Nome:             ${nome || 'Não informado'}
-- Data de Admissão: ${dataAdm || 'Não informada'}
-
-**Carga Horária:**
-- Total Semanal:    ${totalHorasSemanais.toFixed(2)} horas
-- Proporção:        ${((totalHorasSemanais / horasSemanaisPadrao) * 100).toFixed(0)}% de uma jornada de 44h
-
-**Remuneração:**
-- Salário (Ref. 44h): R$ ${salarioBrutoReferencia.toFixed(2)}
-- Salário Proporcional: R$ ${salarioProporcional.toFixed(2)}
-- Adicionais:         R$ ${(adicionalInsalubridade + adicionalPericulosidade).toFixed(2)}
-- Salário de Cálculo: R$ ${salarioBaseCalculo.toFixed(2)}
-
-**Descontos:**
-- INSS:               R$ ${inss.toFixed(2)}
-- IRRF:               R$ ${irrf.toFixed(2)}
-- Total Descontos:    R$ ${(inss + irrf).toFixed(2)}
-
-**Salário Líquido:**
-- Valor a Receber:    R$ ${salarioLiquido.toFixed(2)}
-
-**Encargos da Empresa:**
-- FGTS (8%):          R$ ${fgts.toFixed(2)}
-`.trim();
-
-            document.getElementById('resultado').value = resultado;
-        }
-        
-        // --- Inicialização ---
-        window.onload = () => {
-            popularTabelaHorarios();
-            
-            // Event listener para o botão de copiar
-            document.getElementById('copyButton').addEventListener('click', () => {
-                const resultadoText = document.getElementById('resultado');
-                resultadoText.select();
-                document.execCommand('copy');
-                // Feedback visual para o usuário
-                const copyButton = document.getElementById('copyButton');
-                const originalText = copyButton.textContent;
-                copyButton.textContent = 'Copiado!';
-                setTimeout(() => {
-                    copyButton.textContent = originalText;
-                }, 1500);
-            });
-        };
-    </script>
-</body>
+            if (new Date().getFullYear() !== REGRAS.ano) $("staleYear").hidden = false;
+            calcular();
+        </script>
+    </body>
 </html>
